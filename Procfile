@@ -1,0 +1,1 @@
+web: gunicorn reporttool.wsgi --log-file -
