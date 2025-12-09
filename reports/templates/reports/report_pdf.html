@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <title>Kompetensrapport</title>
+  <style>
+    body {
+      font-family: "DejaVu Sans", sans-serif;
+      font-size: 11pt;
+    }
+    h1, h2 {
+      color: #111827;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12pt;
+    }
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 4pt 6pt;
+      font-size: 9pt;
+    }
+    th {
+      background: #f3f4f6;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kompetensrapport</h1>
+  <h2>{{ full_name }}</h2>
+
+  {% if avg_score %}
+    <p><strong>Genomsnittligt resultat:</strong> {{ avg_score|floatformat:2 }}</p>
+  {% endif %}
+
+  <p>{{ summary_text }}</p>
+
+  <h3>Detaljerade kompetenser</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Kompetens</th>
+        <th>Poäng</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in competencies %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.score|floatformat:2 }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
