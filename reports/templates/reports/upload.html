@@ -125,6 +125,41 @@
       </tbody>
     </table>
 
+        <h2>Resultat på B3:s ledarskapsbeteenden (underbeteenden)</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Huvudområde</th>
+          <th>Beteende</th>
+          <th>Beräknat värde (1–5)</th>
+          <th>Saknade kompetenser</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in b3_underbehaviors %}
+          <tr>
+            <td>{{ item.cluster }}</td>
+            <td>{{ item.name }}</td>
+            <td>
+              {% if item.score %}
+                {{ item.score|floatformat:2 }}
+              {% else %}
+                Ingen data
+              {% endif %}
+            </td>
+            <td>
+              {% if item.missing_competencies %}
+                {{ item.missing_competencies|join:", " }}
+              {% else %}
+                –
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
     <a href="{% url 'report_pdf' %}" class="btn btn-secondary">Ladda ned som PDF</a>
 
     <script>
