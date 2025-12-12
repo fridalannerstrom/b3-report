@@ -1,15 +1,7 @@
 {% if competencies %}
   <h2>Rapport för {{ full_name }}</h2>
 
-  {% if avg_score %}
-    <p><span class="pill">Genomsnittligt resultat: {{ avg_score|floatformat:2 }}</span></p>
-  {% endif %}
-
-  <p class="message">{{ summary_text }}</p>
-
-  <canvas id="competencyChart" height="120"></canvas>
-
-  <h3>TQ Kompetenser</h3>
+<!-- INLEDNING -->
 
   <section class="report-section intro">
   <h2>Inledning</h2>
@@ -24,6 +16,8 @@
     Resultaten presenteras på en femgradig skala (1–5). Skalan visar en indikation på
     hur effektiv personen sannolikt är i att omsätta kompetensen/beteendet i arbetet.
   </p>
+
+<!-- TOLKNING AV SKALA -->
 
   <h3>Hur du tolkar den femgradiga skalan</h3>
 
@@ -80,6 +74,8 @@
   </p>
 </section>
 
+<!-- B3 RESULTAT -->
+
 <section class="report-section">
   <h2>Resultat på B3:s ledarskapsbeteenden</h2>
   <p>
@@ -94,20 +90,20 @@
       <div class="b3-main">
         <h3 class="b3-main-title">{{ cluster.name }}</h3>
 
-<div class="b3-scale">
-  {% if cluster.score_5 %}
-    {% with rounded=cluster.score_5|floatformat:0|add:"0" %}
-      {% for i in "12345" %}
-        {% with n=i|add:"0" %}
-          <span class="dot {% if rounded >= n %}filled{% endif %}"></span>
-        {% endwith %}
-      {% endfor %}
-    {% endwith %}
-    <span class="b3-value">{{ cluster.score_5|floatformat:2 }} / 5</span>
-  {% else %}
-    <span class="no-data">Ingen data</span>
-  {% endif %}
-</div>
+            <div class="b3-scale">
+            {% if cluster.score_5 %}
+                {% with rounded=cluster.score_5|floatformat:0|add:"0" %}
+                {% for i in "12345" %}
+                    {% with n=i|add:"0" %}
+                    <span class="dot {% if rounded >= n %}filled{% endif %}"></span>
+                    {% endwith %}
+                {% endfor %}
+                {% endwith %}
+                <span class="b3-value">{{ cluster.score_5|floatformat:2 }} / 5</span>
+            {% else %}
+                <span class="no-data">Ingen data</span>
+            {% endif %}
+            </div>
 
       </div>
 
@@ -118,20 +114,21 @@
             <div class="b3-under-row">
               <div class="b3-under-name">{{ u.name }}</div>
 
-<div class="b3-scale">
-  {% if u.score_5 != None %}
-    {% with rounded=u.score_5|floatformat:0|add:"0" %}
-      {% for i in "12345" %}
-        {% with n=i|add:"0" %}
-          <span class="dot small{% if rounded >= n %} filled{% endif %}"></span>
-        {% endwith %}
-      {% endfor %}
-    {% endwith %}
-    <span class="b3-value small">{{ u.score_5|floatformat:2 }}</span>
-  {% else %}
-    <span class="no-data">Ingen data</span>
-  {% endif %}
-</div>
+                <div class="b3-scale">
+                {% if u.score_5 != None %}
+                    {% with rounded=u.score_5|floatformat:0|add:"0" %}
+                    {% for i in "12345" %}
+                        {% with n=i|add:"0" %}
+                        <span class="dot small{% if rounded >= n %} filled{% endif %}"></span>
+                        {% endwith %}
+                    {% endfor %}
+                    {% endwith %}
+                    <span class="b3-value small">{{ u.score_5|floatformat:2 }}</span>
+                {% else %}
+                    <span class="no-data">Ingen data</span>
+                {% endif %}
+                </div>
+
             </div>
           {% endif %}
         {% endfor %}
