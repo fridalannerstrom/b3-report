@@ -24,6 +24,30 @@
     </tbody>
   </table>
 
+  <h2>Resultat på B3:s ledarskapsbeteenden (huvudbeteenden)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Huvudbeteende</th>
+      <th>Värde (1–5)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in b3_clusters %}
+      <tr>
+        <td>{{ item.cluster }}</td>
+        <td>
+          {% if item.score %}
+            {{ item.score|floatformat:2 }}
+          {% else %}
+            Ingen data
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
   <h3>B3 Underbeteenden</h3>
   <table>
     <thead>

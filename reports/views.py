@@ -1,5 +1,6 @@
 import asyncio
-from typing import Dict, Any, List, Optional
+import re
+from typing import Dict, Any, List, Optional, Tuple
 from urllib.parse import urlparse
 
 import pandas as pd
@@ -18,107 +19,212 @@ from .forms import ExcelUploadForm
 # ─────────────────────────────────────────
 
 B3_UNDERBEHAVIORS = [
+    # ─────────────────────────────────────────
     # Affärs- och värderingsdrivet ledarskap
-    {"cluster": "Affärs- och värderingsdrivet ledarskap",
-     "name": "Jag driver försäljning och bygger långsiktiga kundrelationer",
-     "competencies": ["Developing relationships", "Results orientation"]},
+    # ─────────────────────────────────────────
+    {
+        "cluster": "Affärs- och värderingsdrivet ledarskap",
+        "name": "Jag driver försäljning och bygger långsiktiga kundrelationer",
+        "competencies": ["Developing relationships", "Results orientation"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Affärs- och värderingsdrivet ledarskap",
+        "name": "Jag följer upp mål och agerar snabbt när något behöver justeras",
+        "competencies": ["Adaptability", "Reliability"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Affärs- och värderingsdrivet ledarskap",
+        "name": "Jag kommunicerar öppet och tydligt så att alla vet vad som gäller",
+        "competencies": ["Written communication"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Affärs- och värderingsdrivet ledarskap",
+        "name": "Jag lyfter och bekräftar medarbetare för att skapa engagemang och tillit",
+        "competencies": ["Engaging others"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Affärs- och värderingsdrivet ledarskap",
+        "name": "Jag attraherar rätt kompetens och formar team som matchar kundernas behov",
+        "competencies": ["Delegating", "Customer focus"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Affärs- och värderingsdrivet ledarskap",
+        "name": "Jag stöttar teamet och visar riktning – både i medvind och motvind",
+        "competencies": ["Resilience", "Supporting others"],
+        "weight": 1.0,
+    },
 
-    {"cluster": "Affärs- och värderingsdrivet ledarskap",
-     "name": "Jag följer upp mål och agerar snabbt när något behöver justeras",
-     "competencies": ["Adaptability", "Reliability"]},
-
-    {"cluster": "Affärs- och värderingsdrivet ledarskap",
-     "name": "Jag kommunicerar öppet och tydligt så att alla vet vad som gäller",
-     "competencies": ["Written communication"]},
-
-    {"cluster": "Affärs- och värderingsdrivet ledarskap",
-     "name": "Jag lyfter och bekräftar medarbetare för att skapa engagemang och tillit",
-     "competencies": ["Engaging others"]},
-
-    {"cluster": "Affärs- och värderingsdrivet ledarskap",
-     "name": "Jag attraherar rätt kompetens och formar team som matchar kundernas behov",
-     "competencies": ["Delegating", "Customer Focus"]},
-
+    # ─────────────────────────────────────────
     # Kommunicera precist och tydligt
-    {"cluster": "Kommunicera precist och tydligt",
-     "name": "Jag använder ett enkelt och tydligt språk för att undvika missförstånd",
-     "competencies": ["Written communication"]},
+    # ─────────────────────────────────────────
+    {
+        "cluster": "Kommunicera precist och tydligt",
+        "name": "Jag använder ett enkelt och tydligt språk för att undvika missförstånd",
+        "competencies": ["Written communication"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Kommunicera precist och tydligt",
+        "name": "Jag tar initiativ till samtal även när det är svårt, och förklarar syftet",
+        "competencies": ["Managing conflicts"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Kommunicera precist och tydligt",
+        "name": "Jag lyfter fram det som fungerar och sprider goda exempel",
+        "competencies": ["Engaging others"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Kommunicera precist och tydligt",
+        "name": "Jag leder genom dialog och bjuder in till reflektion och gemensam förståelse",
+        "competencies": ["Directing others", "Organisational awareness"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Kommunicera precist och tydligt",
+        "name": "Jag kommunicerar med respekt, mod och tydlighet för att skapa trygghet",
+        "competencies": ["Interpersonal communication", "Dealing with ambiguity"],
+        "weight": 1.0,
+    },
 
-    {"cluster": "Kommunicera precist och tydligt",
-     "name": "Jag tar initiativ till samtal även när det är svårt, och förklarar syftet",
-     "competencies": ["Managing conflict"]},
-
-    {"cluster": "Kommunicera precist och tydligt",
-     "name": "Jag lyfter fram det som fungerar och sprider goda exempel",
-     "competencies": ["Engaging others"]},
-
-    {"cluster": "Kommunicera precist och tydligt",
-     "name": "Jag leder genom dialog och bjuder in till reflektion och gemensam förståelse",
-     "competencies": ["Directing others", "Organisational awareness"]},
-
+    # ─────────────────────────────────────────
     # Bygg och främja en prestationsdriven kultur
-    {"cluster": "Bygg och främja en prestationsdriven kultur",
-     "name": "Jag bygger team med kompletterande styrkor och kundfokus",
-     "competencies": ["Delegating", "Customer Focus"]},
+    # ─────────────────────────────────────────
+    {
+        "cluster": "Bygg och främja en prestationsdriven kultur",
+        "name": "Jag bygger team med kompletterande styrkor och kundfokus",
+        "competencies": ["Delegating", "Customer focus"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Bygg och främja en prestationsdriven kultur",
+        "name": "Jag skapar utrymme för idéer och initiativ",
+        "competencies": ["Embracing diversity", "Optimizing processes"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Bygg och främja en prestationsdriven kultur",
+        "name": "Jag kommunicerar öppet och tydligt",
+        "competencies": ["Written communication"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Bygg och främja en prestationsdriven kultur",
+        "name": "Jag skapar trygghet där olika perspektiv ryms",
+        "competencies": ["Embracing diversity"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Bygg och främja en prestationsdriven kultur",
+        "name": "Jag bjuder in till engagemang genom dialog och samarbete",
+        "competencies": ["Networking", "Driving vision and purpose"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Bygg och främja en prestationsdriven kultur",
+        "name": "Jag stärker kulturen genom att visa att vi står tillsammans – både i med- och motgång",
+        "competencies": ["Driving vision and purpose", "Results orientation"],
+        "weight": 1.5,
+    },
 
-    {"cluster": "Bygg och främja en prestationsdriven kultur",
-     "name": "Jag skapar utrymme för idéer och initiativ",
-     "competencies": ["Embracing diversity", "Optimising processes"]},
-
-    {"cluster": "Bygg och främja en prestationsdriven kultur",
-     "name": "Jag kommunicerar öppet och tydligt",
-     "competencies": ["Written communication"]},
-
-    {"cluster": "Bygg och främja en prestationsdriven kultur",
-     "name": "Jag skapar trygghet där olika perspektiv ryms",
-     "competencies": ["Embracing diversity"]},
-
-    {"cluster": "Bygg och främja en prestationsdriven kultur",
-     "name": "Jag bjuder in till engagemang genom dialog och samarbete",
-     "competencies": ["Networking", "Driving vision and purpose"]},
-
+    # ─────────────────────────────────────────
     # Driva mot måldrivna och ambitiösa mål
-    {"cluster": "Driva mot måldrivna och ambitiösa mål",
-     "name": "Jag förankrar mål så att alla förstår och känner motivation",
-     "competencies": ["Engaging others", "Driving vision and purpose"]},
+    # ─────────────────────────────────────────
+    {
+        "cluster": "Driva mot måldrivna och ambitiösa mål",
+        "name": "Jag förankrar mål så att alla förstår och känner motivation",
+        "competencies": ["Engaging others", "Driving vision and purpose"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Driva mot måldrivna och ambitiösa mål",
+        "name": "Jag följer upp och stöttar för att nå förväntat resultat",
+        "competencies": ["Directing others", "Supporting others"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Driva mot måldrivna och ambitiösa mål",
+        "name": "Jag samarbetar över gränser för att nå gemensamma mål",
+        "competencies": ["Networking"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Driva mot måldrivna och ambitiösa mål",
+        "name": "Jag skapar tydliga arbetssätt som ger fokus och framdrift",
+        "competencies": ["Drive", "Optimizing processes"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Driva mot måldrivna och ambitiösa mål",
+        "name": "Jag gör mål hanterbara och hjälper teamet att prioritera rätt",
+        "competencies": ["Resilience", "Organizing and prioritizing"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Driva mot måldrivna och ambitiösa mål",
+        "name": "Jag ser till helheten och agerar långsiktigt, även när det är kortsiktigt utmanande.",
+        "competencies": ["Strategic focus", "Drive"],
+        "weight": 1.0,
+    },
 
-    {"cluster": "Driva mot måldrivna och ambitiösa mål",
-     "name": "Jag följer upp och stöttar för att nå förväntat resultat",
-     "competencies": ["Directing others", "Supporting others"]},
-
-    {"cluster": "Driva mot måldrivna och ambitiösa mål",
-     "name": "Jag samarbetar över gränser för att nå gemensamma mål",
-     "competencies": ["Networking"]},
-
-    {"cluster": "Driva mot måldrivna och ambitiösa mål",
-     "name": "Jag skapar tydliga arbetssätt som ger fokus och framdrift",
-     "competencies": ["Drive", "Optimising processes"]},
-
-    {"cluster": "Driva mot måldrivna och ambitiösa mål",
-     "name": "Jag gör mål hanterbara och hjälper teamet att prioritera rätt",
-     "competencies": ["Resilience", "Organising and prioritising"]},
-
+    # ─────────────────────────────────────────
     # Rekrytera, utveckla och behåll rätt förmågor och personer
-    {"cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
-     "name": "Jag hittar personer som stärker teamet affärsmässigt, kulturellt och kompetensmässigt",
-     "competencies": ["Delegating", "Customer Focus"]},
-
-    {"cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
-     "name": "Jag får medarbetare att växa genom att se potential och främja lärande",
-     "competencies": ["Supporting others"]},
-
-    {"cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
-     "name": "Jag skapar tydlighet i rollen som konsult och kollega",
-     "competencies": ["Written communication"]},
-
-    {"cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
-     "name": "Jag förtydligar vad som förväntas i uppdrag och kultur",
-     "competencies": ["Written communication"]},
-
-    {"cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
-     "name": "Jag bygger delaktighet genom gemenskap, respekt och goda förebilder",
-     "competencies": ["Embracing diversity", "Developing relationships"]},
+    # ─────────────────────────────────────────
+    {
+        "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
+        "name": "Jag hittar personer som stärker teamet affärsmässigt, kulturellt och kompetensmässigt",
+        "competencies": ["Delegating", "Customer focus"],
+        "weight": 1.5,
+    },
+    {
+        "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
+        "name": "Jag får medarbetare att växa genom att se potential och främja lärande",
+        "competencies": ["Supporting others"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
+        "name": "Jag skapar tydlighet i rollen som konsult och kollega",
+        "competencies": ["Written communication"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
+        "name": "Jag förtydligar vad som förväntas i uppdrag och kultur",
+        "competencies": ["Written communication"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
+        "name": "Jag bygger delaktighet genom gemenskap, respekt och goda förebilder",
+        "competencies": ["Embracing diversity", "Developing relationships"],
+        "weight": 1.0,
+    },
+    {
+        "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
+        "name": "Jag ser till att vi har rätt personer på bussen och är modig att fatta beslut när en roll inte är rätt för individen eller teamet",
+        "competencies": ["Decisiveness", "Organisational awareness"],
+        "weight": 1.5,
+    },
 ]
+
+
+# Synonymer/varianter som brukar dyka upp i Excel-kolumnerna
+COMP_ALIASES = {
+    "customer focus": ["customer focus", "customerfocus"],
+    "managing conflicts": ["managing conflict", "managing conflicts"],
+    "optimizing processes": ["optimising processes", "optimizing processes"],
+    "organizing and prioritizing": ["organising and prioritising", "organizing and prioritizing"],
+    "driving vision and purpose": ["driving vision & purpose", "driving vision and purpose", "driving vision purpose"],
+    "developing relationships": ["developing relationships", "developing relationship"],
+    "results orientation": ["results orientation", "result orientation"],
+}
 
 
 # ─────────────────────────────────────────
@@ -141,6 +247,104 @@ def _extract_competency_values(df: pd.DataFrame) -> Dict[str, float]:
                 continue
 
     return competency_values
+
+
+def _norm(s: str) -> str:
+    s = (s or "").strip().lower()
+    s = s.replace("&", "and")
+    s = re.sub(r"\s+", " ", s)
+    return s
+
+def _build_lookup(competency_values: Dict[str, float]) -> Dict[str, float]:
+    """
+    Bygger en normaliserad lookup av Excel-kompetenser, så vi kan matcha stabilt.
+    """
+    lookup: Dict[str, float] = {}
+    for k, v in competency_values.items():
+        lookup[_norm(str(k))] = v
+    return lookup
+
+def _find_score(lookup: Dict[str, float], target: str) -> Optional[float]:
+    t = _norm(target)
+
+    # 1) Direkt match
+    if t in lookup:
+        return lookup[t]
+
+    # 2) Alias-lista
+    for canon, variants in COMP_ALIASES.items():
+        if t == canon:
+            for var in variants:
+                nv = _norm(var)
+                if nv in lookup:
+                    return lookup[nv]
+
+    # 3) “contains” fallback (snäll men kan rädda små skillnader)
+    for k, v in lookup.items():
+        if t in k or k in t:
+            return v
+
+    return None
+
+def calculate_b3_underbehaviors_and_clusters(competency_values: Dict[str, float]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """
+    Returnerar:
+      - underbehaviors: lista med score per rad (medel av kompetenser)
+      - clusters: lista med viktat medelvärde per huvudbeteende
+    """
+    lookup = _build_lookup(competency_values)
+
+    underbehaviors: List[Dict[str, Any]] = []
+    cluster_acc: Dict[str, Dict[str, float]] = {}  # {cluster: {"w_sum": x, "w_total": y}}
+
+    for beh in B3_UNDERBEHAVIORS:
+        scores = []
+        missing = []
+
+        for comp in beh["competencies"]:
+            val = _find_score(lookup, comp)
+            if val is None:
+                missing.append(comp)
+            else:
+                scores.append(val)
+
+        score = (sum(scores) / len(scores)) if scores else None
+        weight = float(beh.get("weight", 1.0))
+
+        underbehaviors.append({
+            "cluster": beh["cluster"],
+            "name": beh["name"],
+            "score": score,
+            "weight": weight,
+            "missing_competencies": missing,  # bra för debug, men visa inte i UI
+        })
+
+        # Viktad aggregering till kluster (bara om vi faktiskt har score)
+        if score is not None:
+            if beh["cluster"] not in cluster_acc:
+                cluster_acc[beh["cluster"]] = {"w_sum": 0.0, "w_total": 0.0}
+            cluster_acc[beh["cluster"]]["w_sum"] += score * weight
+            cluster_acc[beh["cluster"]]["w_total"] += weight
+
+    clusters: List[Dict[str, Any]] = []
+    for cluster_name, acc in cluster_acc.items():
+        cluster_score = (acc["w_sum"] / acc["w_total"]) if acc["w_total"] else None
+        clusters.append({
+            "cluster": cluster_name,
+            "score": cluster_score,
+        })
+
+    # Behåll “snygg” ordning enligt dina huvudområden
+    cluster_order = [
+        "Affärs- och värderingsdrivet ledarskap",
+        "Kommunicera precist och tydligt",
+        "Bygg och främja en prestationsdriven kultur",
+        "Driva mot måldrivna och ambitiösa mål",
+        "Rekrytera, utveckla och behåll rätt förmågor och personer",
+    ]
+    clusters.sort(key=lambda x: cluster_order.index(x["cluster"]) if x["cluster"] in cluster_order else 999)
+
+    return underbehaviors, clusters
 
 
 def calculate_b3_underbehaviors(competency_values: Dict[str, float]) -> List[Dict[str, Any]]:
@@ -255,7 +459,7 @@ def upload_view(request):
         else:
             summary_text = "Inga kompetensvärden hittades i filen."
 
-        b3_underbehaviors = calculate_b3_underbehaviors(competency_values)
+        b3_underbehaviors, b3_clusters = calculate_b3_underbehaviors_and_clusters(competency_values)
 
         report_data = {
             "full_name": full_name,
@@ -265,6 +469,7 @@ def upload_view(request):
             "chart_labels": labels,
             "chart_values": values,
             "b3_underbehaviors": b3_underbehaviors,
+            "b3_clusters": b3_clusters,
         }
 
         request.session["report_data"] = report_data
