@@ -3,55 +3,38 @@
 <head>
   <meta charset="utf-8">
   <title>Kompetensrapport</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: "DejaVu Sans", sans-serif;
-      font-size: 11pt;
-    }
-    h1, h2 {
-      color: #111827;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12pt;
-    }
-    th, td {
-      border: 1px solid #d1d5db;
-      padding: 4pt 6pt;
-      font-size: 9pt;
-    }
-    th {
-      background: #f3f4f6;
-    }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: white; }
+    .report-page { max-width: 794px; margin: 0 auto; padding: 24px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: 6px 4px; text-align: left; }
+    th { font-weight: 700; color: #374151; }
+    .pill { display:inline-block; padding: 2px 10px; border-radius: 999px; background:#eef2ff; color:#3730a3; font-size: 12px; }
+    .message { margin: 10px 0 16px; }
   </style>
 </head>
 <body>
-  <h1>Kompetensrapport</h1>
-  <h2>{{ full_name }}</h2>
+  <div class="report-page">
+    <h1>Kompetensrapport</h1>
+    {% include "reports/_report_content.html" %}
+  </div>
 
-  {% if avg_score %}
-    <p><strong>Genomsnittligt resultat:</strong> {{ avg_score|floatformat:2 }}</p>
+  {% if competencies %}
+  <script>
+    const labels = {{ chart_labels|safe }};
+    const values = {{ chart_values|safe }};
+
+    const ctx = document.getElementById('competencyChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{ label: 'Kompetenspoäng', data: values }]
+      },
+      options: { responsive: true, animation: false, scales: { y: { beginAtZero: true, max: 5 } } }
+    });
+  </script>
   {% endif %}
-
-  <p>{{ summary_text }}</p>
-
-  <h3>Detaljerade kompetenser</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Kompetens</th>
-        <th>Poäng</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in competencies %}
-        <tr>
-          <td>{{ item.name }}</td>
-          <td>{{ item.score|floatformat:2 }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 </body>
 </html>

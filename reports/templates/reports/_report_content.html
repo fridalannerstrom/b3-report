@@ -1,0 +1,44 @@
+{% if competencies %}
+  <h2>Rapport för {{ full_name }}</h2>
+
+  {% if avg_score %}
+    <p><span class="pill">Genomsnittligt resultat: {{ avg_score|floatformat:2 }}</span></p>
+  {% endif %}
+
+  <p class="message">{{ summary_text }}</p>
+
+  <canvas id="competencyChart" height="120"></canvas>
+
+  <h3>TQ Kompetenser</h3>
+  <table>
+    <thead>
+      <tr><th>Kompetens</th><th>Poäng</th></tr>
+    </thead>
+    <tbody>
+      {% for item in competencies %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.score|floatformat:2 }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>B3 Underbeteenden</h3>
+  <table>
+    <thead>
+      <tr><th>Huvudområde</th><th>Beteende</th><th>Värde (1–5)</th></tr>
+    </thead>
+    <tbody>
+      {% for item in b3_underbehaviors %}
+        <tr>
+          <td>{{ item.cluster }}</td>
+          <td>{{ item.name }}</td>
+          <td>{% if item.score %}{{ item.score|floatformat:2 }}{% else %}–{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Ingen rapport att visa (ladda upp en Excel först).</p>
+{% endif %}
