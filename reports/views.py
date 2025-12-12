@@ -312,6 +312,7 @@ def calculate_b3_underbehaviors_and_clusters(
         underbehaviors.append({
             "cluster": beh["cluster"],
             "name": beh["name"],
+            "competencies": beh["competencies"],
             "score_5": under_score,
             "score_100": round(under_score * 20, 1) if under_score is not None else None,
             "weight": weight,

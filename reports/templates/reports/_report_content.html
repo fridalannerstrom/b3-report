@@ -138,6 +138,50 @@
   {% endfor %}
 </section>
 
+<!-- 3. VISUELL MAPPNING -->
+
+<section class="report-section">
+  <h2>Visuell mappning: B3-beteenden → TQ-kompetenser</h2>
+  <p>
+    Här visas hur varje B3-underbeteende är kopplat till TQ-kompetenser enligt mappningen.
+  </p>
+
+  {% for cluster in b3_clusters %}
+    <div class="map-card">
+      <div class="map-header">
+        <h3 class="map-title">{{ cluster.name }}</h3>
+      </div>
+
+      <div class="map-body">
+        {% for u in b3_underbehaviors %}
+          {% if u.cluster == cluster.name %}
+            <div class="map-row">
+              <div class="map-left">
+                <div class="map-behavior">{{ u.name }}</div>
+              </div>
+
+              <div class="map-mid" aria-hidden="true">
+                <span class="map-arrow">→</span>
+              </div>
+
+              <div class="map-right">
+                {% if u.competencies %}
+                  <div class="chip-wrap">
+                    {% for c in u.competencies %}
+                      <span class="chip">{{ c }}</span>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <span class="no-data">Ingen mappning</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</section>
 
   <table>
     <thead>
