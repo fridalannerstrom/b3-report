@@ -10,6 +10,138 @@
   <canvas id="competencyChart" height="120"></canvas>
 
   <h3>TQ Kompetenser</h3>
+
+  <section class="report-section intro">
+  <h2>Inledning</h2>
+
+  <p>
+    Den här rapporten sammanfattar resultat från TQ-kompetenser (rådata från Excel)
+    och en mappning till B3:s ledarskapsbeteenden. Syftet är att ge en tydlig överblick
+    över styrkor och utvecklingsområden i relation till de beteenden som efterfrågas.
+  </p>
+
+  <p>
+    Resultaten presenteras på en femgradig skala (1–5). Skalan visar en indikation på
+    hur effektiv personen sannolikt är i att omsätta kompetensen/beteendet i arbetet.
+  </p>
+
+  <h3>Hur du tolkar den femgradiga skalan</h3>
+
+  <table class="scale-table">
+    <thead>
+      <tr>
+        <th style="width: 20%;">Nivå</th>
+        <th style="width: 30%;">Benämning</th>
+        <th>Tolkning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>Utrymme för utveckling</td>
+        <td>
+          Personen bedöms ligga under många andra. Indikerar tydligt utvecklingsområde.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>Tillräcklig</td>
+        <td>
+          Personen ligger något under genomsnittet. Kan fungera, men kan behöva stöd eller träning.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>God</td>
+        <td>
+          Personen ligger ungefär som de flesta. Stabil nivå som ofta fungerar väl i vardagen.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td>Mycket god</td>
+        <td>
+          Personen ligger över många andra. Tydlig styrka och förmåga att prestera i fler situationer.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td>Utmärkt</td>
+        <td>
+          Personen ligger över de flesta. Stark och konsekvent förmåga att omsätta detta i praktiken.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="note">
+    Obs: Resultat ska alltid tolkas tillsammans med övrig information (t.ex. rollkrav,
+    erfarenhet och intervjudata). Rapporten är ett beslutsstöd, inte ett facit.
+  </p>
+</section>
+
+<section class="report-section">
+  <h2>Resultat på B3:s ledarskapsbeteenden</h2>
+  <p>
+    Resultaten visas på en femgradig skala (1–5) där varje beteende presenteras
+    tillsammans med tillhörande underbeteenden.
+  </p>
+
+  {% for cluster in b3_clusters %}
+    <div class="b3-group">
+
+      <!-- HUVUDBETEENDE -->
+      <div class="b3-main">
+        <h3 class="b3-main-title">{{ cluster.name }}</h3>
+
+<div class="b3-scale">
+  {% if cluster.score_5 %}
+    {% with rounded=cluster.score_5|floatformat:0|add:"0" %}
+      {% for i in "12345" %}
+        {% with n=i|add:"0" %}
+          <span class="dot {% if rounded >= n %}filled{% endif %}"></span>
+        {% endwith %}
+      {% endfor %}
+    {% endwith %}
+    <span class="b3-value">{{ cluster.score_5|floatformat:2 }} / 5</span>
+  {% else %}
+    <span class="no-data">Ingen data</span>
+  {% endif %}
+</div>
+
+      </div>
+
+      <!-- UNDERBETEENDEN -->
+      <div class="b3-under">
+        {% for u in b3_underbehaviors %}
+          {% if u.cluster == cluster.name %}
+            <div class="b3-under-row">
+              <div class="b3-under-name">{{ u.name }}</div>
+
+<div class="b3-scale">
+  {% if u.score_5 != None %}
+    {% with rounded=u.score_5|floatformat:0|add:"0" %}
+      {% for i in "12345" %}
+        {% with n=i|add:"0" %}
+          <span class="dot small{% if rounded >= n %} filled{% endif %}"></span>
+        {% endwith %}
+      {% endfor %}
+    {% endwith %}
+    <span class="b3-value small">{{ u.score_5|floatformat:2 }}</span>
+  {% else %}
+    <span class="no-data">Ingen data</span>
+  {% endif %}
+</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+    </div>
+  {% endfor %}
+</section>
+
+
   <table>
     <thead>
       <tr><th>Kompetens</th><th>Poäng</th></tr>
