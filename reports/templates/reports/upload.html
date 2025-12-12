@@ -263,7 +263,7 @@
   <h1>Generera kompetensrapport</h1>
 
   <div class="upload-box">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" >
       {% csrf_token %}
       {{ form.as_p }}
       <button class="btn btn-primary" type="submit">Ladda upp &amp; visa rapport</button>
@@ -298,5 +298,10 @@
 {% endif %}
 
 </div>
+
+<script>
+  const fileInput = document.querySelector('#id_file');
+  if (fileInput) fileInput.setAttribute('accept', '.xlsx,.xls');
+</script>
 </body>
 </html>
