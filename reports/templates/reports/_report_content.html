@@ -34,17 +34,24 @@
   </thead>
   <tbody>
     {% for item in b3_clusters %}
-      <tr>
-        <td>{{ item.cluster }}</td>
-        <td>
-          {% if item.score %}
-            {{ item.score|floatformat:2 }}
-          {% else %}
-            Ingen data
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
+<tr>
+  <td>{{ item.name }}</td>
+  <td>
+    {% if item.score_5 %}
+      {{ item.score_5|floatformat:2 }}
+    {% else %}
+      Ingen data
+    {% endif %}
+  </td>
+  <td>
+    {% if item.score_100 %}
+      {{ item.score_100|floatformat:1 }}
+    {% else %}
+      –
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
   </tbody>
 </table>
 
@@ -55,12 +62,25 @@
     </thead>
     <tbody>
       {% for item in b3_underbehaviors %}
-        <tr>
-          <td>{{ item.cluster }}</td>
-          <td>{{ item.name }}</td>
-          <td>{% if item.score %}{{ item.score|floatformat:2 }}{% else %}–{% endif %}</td>
-        </tr>
-      {% endfor %}
+<tr>
+  <td>{{ item.cluster }}</td>
+  <td>{{ item.name }}</td>
+  <td>
+    {% if item.score_5 %}
+      {{ item.score_5|floatformat:2 }}
+    {% else %}
+      –
+    {% endif %}
+  </td>
+  <td>
+    {% if item.score_100 %}
+      {{ item.score_100|floatformat:1 }}
+    {% else %}
+      –
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
     </tbody>
   </table>
 {% else %}

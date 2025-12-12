@@ -26,13 +26,13 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Affärs- och värderingsdrivet ledarskap",
         "name": "Jag driver försäljning och bygger långsiktiga kundrelationer",
         "competencies": ["Developing relationships", "Results orientation"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
     {
         "cluster": "Affärs- och värderingsdrivet ledarskap",
         "name": "Jag följer upp mål och agerar snabbt när något behöver justeras",
         "competencies": ["Adaptability", "Reliability"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
     {
         "cluster": "Affärs- och värderingsdrivet ledarskap",
@@ -72,7 +72,7 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Kommunicera precist och tydligt",
         "name": "Jag tar initiativ till samtal även när det är svårt, och förklarar syftet",
         "competencies": ["Managing conflicts"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
     {
         "cluster": "Kommunicera precist och tydligt",
@@ -84,7 +84,7 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Kommunicera precist och tydligt",
         "name": "Jag leder genom dialog och bjuder in till reflektion och gemensam förståelse",
         "competencies": ["Directing others", "Organisational awareness"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
     {
         "cluster": "Kommunicera precist och tydligt",
@@ -130,7 +130,7 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Bygg och främja en prestationsdriven kultur",
         "name": "Jag stärker kulturen genom att visa att vi står tillsammans – både i med- och motgång",
         "competencies": ["Driving vision and purpose", "Results orientation"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
 
     # ─────────────────────────────────────────
@@ -140,7 +140,7 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Driva mot måldrivna och ambitiösa mål",
         "name": "Jag förankrar mål så att alla förstår och känner motivation",
         "competencies": ["Engaging others", "Driving vision and purpose"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
     {
         "cluster": "Driva mot måldrivna och ambitiösa mål",
@@ -152,7 +152,7 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Driva mot måldrivna och ambitiösa mål",
         "name": "Jag samarbetar över gränser för att nå gemensamma mål",
         "competencies": ["Networking"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
     {
         "cluster": "Driva mot måldrivna och ambitiösa mål",
@@ -180,7 +180,7 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
         "name": "Jag hittar personer som stärker teamet affärsmässigt, kulturellt och kompetensmässigt",
         "competencies": ["Delegating", "Customer focus"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
     {
         "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
@@ -210,7 +210,7 @@ B3_UNDERBEHAVIORS = [
         "cluster": "Rekrytera, utveckla och behåll rätt förmågor och personer",
         "name": "Jag ser till att vi har rätt personer på bussen och är modig att fatta beslut när en roll inte är rätt för individen eller teamet",
         "competencies": ["Decisiveness", "Organisational awareness"],
-        "weight": 1.5,
+        "weight": 2.0,
     },
 ]
 
@@ -286,65 +286,68 @@ def _find_score(lookup: Dict[str, float], target: str) -> Optional[float]:
 
     return None
 
-def calculate_b3_underbehaviors_and_clusters(competency_values: Dict[str, float]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-    """
-    Returnerar:
-      - underbehaviors: lista med score per rad (medel av kompetenser)
-      - clusters: lista med viktat medelvärde per huvudbeteende
-    """
+def calculate_b3_underbehaviors_and_clusters(
+    competency_values: Dict[str, float]
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+
     lookup = _build_lookup(competency_values)
 
     underbehaviors: List[Dict[str, Any]] = []
-    cluster_acc: Dict[str, Dict[str, float]] = {}  # {cluster: {"w_sum": x, "w_total": y}}
+    clusters: Dict[str, Dict[str, float]] = {}
 
     for beh in B3_UNDERBEHAVIORS:
-        scores = []
-        missing = []
+        scores: List[float] = []
+        missing: List[str] = []
 
         for comp in beh["competencies"]:
-            val = _find_score(lookup, comp)
-            if val is None:
+            v = _find_score(lookup, comp)
+            if v is None:
                 missing.append(comp)
             else:
-                scores.append(val)
+                scores.append(v)
 
-        score = (sum(scores) / len(scores)) if scores else None
+        under_score = (sum(scores) / len(scores)) if scores else None
         weight = float(beh.get("weight", 1.0))
 
         underbehaviors.append({
             "cluster": beh["cluster"],
             "name": beh["name"],
-            "score": score,
+            "score_5": under_score,
+            "score_100": round(under_score * 20, 1) if under_score is not None else None,
             "weight": weight,
-            "missing_competencies": missing,  # bra för debug, men visa inte i UI
+            "missing": missing,  # bra för debug
         })
 
-        # Viktad aggregering till kluster (bara om vi faktiskt har score)
-        if score is not None:
-            if beh["cluster"] not in cluster_acc:
-                cluster_acc[beh["cluster"]] = {"w_sum": 0.0, "w_total": 0.0}
-            cluster_acc[beh["cluster"]]["w_sum"] += score * weight
-            cluster_acc[beh["cluster"]]["w_total"] += weight
+        if under_score is not None:
+            c = clusters.setdefault(beh["cluster"], {"sum": 0.0, "weight": 0.0})
+            c["sum"] += under_score * weight
+            c["weight"] += weight
 
-    clusters: List[Dict[str, Any]] = []
-    for cluster_name, acc in cluster_acc.items():
-        cluster_score = (acc["w_sum"] / acc["w_total"]) if acc["w_total"] else None
-        clusters.append({
-            "cluster": cluster_name,
-            "score": cluster_score,
-        })
+    # Gör en stabil lista i samma ordning som klustren dyker upp i B3_UNDERBEHAVIORS
+    cluster_order = []
+    for beh in B3_UNDERBEHAVIORS:
+        if beh["cluster"] not in cluster_order:
+            cluster_order.append(beh["cluster"])
 
-    # Behåll “snygg” ordning enligt dina huvudområden
-    cluster_order = [
-        "Affärs- och värderingsdrivet ledarskap",
-        "Kommunicera precist och tydligt",
-        "Bygg och främja en prestationsdriven kultur",
-        "Driva mot måldrivna och ambitiösa mål",
-        "Rekrytera, utveckla och behåll rätt förmågor och personer",
-    ]
-    clusters.sort(key=lambda x: cluster_order.index(x["cluster"]) if x["cluster"] in cluster_order else 999)
+    cluster_results: List[Dict[str, Any]] = []
+    for cluster_name in cluster_order:
+        data = clusters.get(cluster_name)
+        if not data or data["weight"] == 0:
+            cluster_results.append({
+                "name": cluster_name,
+                "score_5": None,
+                "score_100": None,
+            })
+        else:
+            score_5 = data["sum"] / data["weight"]
+            cluster_results.append({
+                "name": cluster_name,
+                "score_5": round(score_5, 2),
+                "score_100": round(score_5 * 20, 1),
+            })
 
-    return underbehaviors, clusters
+    return underbehaviors, cluster_results
+
 
 
 def calculate_b3_underbehaviors(competency_values: Dict[str, float]) -> List[Dict[str, Any]]:
@@ -471,6 +474,9 @@ def upload_view(request):
             "b3_underbehaviors": b3_underbehaviors,
             "b3_clusters": b3_clusters,
         }
+
+        print("B3 DEBUG missing count:", sum(len(x["missing"]) for x in b3_underbehaviors))
+        print("Example missing:", [x for x in b3_underbehaviors if x["missing"]][:2])
 
         request.session["report_data"] = report_data
         context.update(report_data)
