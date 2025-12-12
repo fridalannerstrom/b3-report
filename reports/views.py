@@ -453,6 +453,14 @@ def upload_view(request):
         values = list(competency_values.values())
         avg_score = (sum(values) / len(values)) if values else None
 
+        competencies_list = []
+        for k, v in competency_values.items():
+            competencies_list.append({
+                "name": k,
+                "score_5": float(v),
+                "score_5_rounded": int(round(float(v))),  # ✅ för pluppar
+            })
+
         if avg_score is not None:
             if avg_score >= 3.5:
                 summary_text = "Ditt genomsnittliga resultat ligger på en hög nivå."
@@ -469,7 +477,7 @@ def upload_view(request):
             "full_name": full_name,
             "avg_score": avg_score,
             "summary_text": summary_text,
-            "competencies": [{"name": k, "score": v} for k, v in competency_values.items()],
+            "competencies": competencies_list, 
             "chart_labels": labels,
             "chart_values": values,
             "b3_underbehaviors": b3_underbehaviors,

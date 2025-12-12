@@ -183,19 +183,27 @@
   {% endfor %}
 </section>
 
-  <table>
-    <thead>
-      <tr><th>Kompetens</th><th>Poäng</th></tr>
-    </thead>
-    <tbody>
-      {% for item in competencies %}
-        <tr>
-          <td>{{ item.name }}</td>
-          <td>{{ item.score|floatformat:2 }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<!-- 4. RESULTAT TQ KOMPETENSER -->
+
+<section class="report-section">
+  <h2>Resultat på TQ:s kompetenser</h2>
+  <p>Detta är rådata från Excel. Varje kompetens visas på en femgradig skala (1–5).</p>
+
+  <div class="tq-grid">
+    {% for c in competencies %}
+      <div class="tq-row">
+        <div class="tq-name">{{ c.name }}</div>
+
+        <div class="tq-scale">
+          {% for i in "12345" %}
+            <span class="dot {% if c.score_5_rounded >= i|add:'0' %}filled{% endif %}"></span>
+          {% endfor %}
+          <span class="tq-value">{{ c.score_5|floatformat:2 }} / 5</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
 
   <h2>Resultat på B3:s ledarskapsbeteenden (huvudbeteenden)</h2>
 <table>
