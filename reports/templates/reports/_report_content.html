@@ -89,21 +89,75 @@
       <!-- HUVUDBETEENDE -->
       <div class="b3-main">
         <h3 class="b3-main-title">{{ cluster.name }}</h3>
+<div class="b3-scale">
+{% with steps=cluster.score_5_half_steps %}
+  {% if steps != None %}
+    {% for i in "12345" %}
+      {% with step=forloop.counter|add:forloop.counter %}
+        {% if steps >= step %}
+          <span class="dot filled"></span>
+        {% elif steps == step|add:"-1" %}
+          <span class="dot half"></span>
+        {% else %}
+          <span class="dot"></span>
+        {% endif %}
+      {% endwith %}
+    {% endfor %}
+  {% else %}
+    <span class="no-data">Ingen data</span>
+  {% endif %}
+{% endwith %}
+</div>
 
-            <div class="b3-scale">
-            {% if cluster.score_5 %}
-                {% with rounded=cluster.score_5|floatformat:0|add:"0" %}
-                {% for i in "12345" %}
-                    {% with n=i|add:"0" %}
-                    <span class="dot {% if rounded >= n %}filled{% endif %}"></span>
-                    {% endwith %}
-                {% endfor %}
-                {% endwith %}
-                <span class="b3-value">{{ cluster.score_5|floatformat:2 }} / 5</span>
-            {% else %}
-                <span class="no-data">Ingen data</span>
-            {% endif %}
-            </div>
+{% if cluster.calc_debug %}
+  <details class="calc-details calc-cluster">
+    <summary class="calc-summary">Visa uträkning</summary>
+
+    <div class="calc-box">
+
+      {% if cluster.calc_human %}
+        <div class="calc-formula">
+          <strong>Så räknas det:</strong>
+          (summa av <em>värde × vikt</em>) / (summa av vikter)
+        </div>
+
+        <div class="calc-line">
+          <strong>Uträkning:</strong> {{ cluster.calc_human.line }}
+        </div>
+      {% endif %}
+
+      {% if cluster.calc_debug.items_used %}
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>Underbeteende</th>
+              <th>Värde</th>
+              <th>Vikt</th>
+              <th>Värde × vikt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for it in cluster.calc_debug.items_used %}
+              <tr>
+                <td>{{ it.underbehavior }}</td>
+                <td>{{ it.score|floatformat:2 }}</td>
+                <td>{{ it.weight|floatformat:0 }}</td>
+                <td>{{ it.score|floatformat:2|add:"0" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="calc-result">
+          <strong>Resultat:</strong> {{ cluster.score_5|floatformat:2 }} / 5
+        </div>
+      {% else %}
+        <div class="no-data">Ingen data tillgänglig för detta huvudbeteende.</div>
+      {% endif %}
+
+    </div>
+  </details>
+{% endif %}
 
       </div>
 
@@ -115,21 +169,87 @@
               <div class="b3-under-name">{{ u.name }}</div>
 
                 <div class="b3-scale">
-                {% if u.score_5 != None %}
-                    {% with rounded=u.score_5|floatformat:0|add:"0" %}
-                    {% for i in "12345" %}
-                        {% with n=i|add:"0" %}
-                        <span class="dot small{% if rounded >= n %} filled{% endif %}"></span>
-                        {% endwith %}
-                    {% endfor %}
-                    {% endwith %}
-                    <span class="b3-value small">{{ u.score_5|floatformat:2 }}</span>
-                {% else %}
-                    <span class="no-data">Ingen data</span>
-                {% endif %}
-                </div>
+{% with steps=u.score_5_half_steps %}
+  {% if steps != None %}
+    {% for i in "12345" %}
+      {% with step=forloop.counter|add:forloop.counter %}
+        {% if steps >= step %}
+          <span class="dot small filled"></span>
+        {% elif steps == step|add:"-1" %}
+          <span class="dot small half"></span>
+        {% else %}
+          <span class="dot small"></span>
+        {% endif %}
+      {% endwith %}
+    {% endfor %}
+  {% else %}
+    <span class="no-data">Ingen data</span>
+  {% endif %}
+{% endwith %}
+
+
+</div>
 
             </div>
+{# --- Debug/uträkning per underbeteende --- #}
+{% if u.calc_debug %}
+  <details class="calc-details">
+    <summary class="calc-summary">Visa uträkning</summary>
+
+    <div class="calc-box">
+      <div class="calc-formula">
+        <div class="calc-formula">
+  <strong>Så räknas det:</strong>
+  (summa av <em>värde × vikt</em>) / (summa av vikter)
+</div>
+
+{% if u.calc_human %}
+  <div class="calc-line">
+    <strong>Uträkning:</strong> {{ u.calc_human.line }}
+  </div>
+{% endif %}
+      </div>
+
+      {% if u.calc_debug.components %}
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>Kompetens</th>
+              <th>Värde</th>
+              <th>Vikt</th>
+              <th>Värde × vikt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for comp in u.calc_debug.components %}
+              <tr>
+                <td>{{ comp.competency }}</td>
+                <td>{{ comp.score|floatformat:2 }}</td>
+                <td>{{ comp.weight|floatformat:2 }}</td>
+                <td>{{ comp.weighted|floatformat:2 }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="calc-result">
+          <strong>Resultat:</strong> {{ u.score_5|floatformat:2 }} / 5
+        </div>
+      {% else %}
+        <div class="no-data">Ingen kompetensdata hittades för detta underbeteende.</div>
+      {% endif %}
+
+      {% if u.missing %}
+        <div class="calc-missing">
+          <strong>Saknas i Excel:</strong>
+          {{ u.missing|join:", " }}
+        </div>
+      {% endif %}
+    </div>
+  </details>
+{% endif %}
+
+
           {% endif %}
         {% endfor %}
       </div>
@@ -261,6 +381,7 @@
     {% endif %}
   </td>
 </tr>
+
 {% endfor %}
     </tbody>
   </table>
