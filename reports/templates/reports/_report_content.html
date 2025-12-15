@@ -142,7 +142,7 @@
                 <td>{{ it.underbehavior }}</td>
                 <td>{{ it.score|floatformat:2 }}</td>
                 <td>{{ it.weight|floatformat:0 }}</td>
-                <td>{{ it.score|floatformat:2|add:"0" }}</td>
+                <td>{{ it.weighted|floatformat:2 }}</td>
               </tr>
             {% endfor %}
           </tbody>

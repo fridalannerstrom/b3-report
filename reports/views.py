@@ -438,7 +438,12 @@ def calculate_b3_underbehaviors_and_clusters(
         cluster_half_steps = int(cluster_half * 2) if cluster_half is not None else None
 
         items_used = [
-            {"underbehavior": x["name"], "score": x["score_5"], "weight": x["weight"]}
+            {
+                "underbehavior": x["name"],
+                "score": x["score_5"],
+                "weight": x["weight"],
+                "weighted": (x["score_5"] * x["weight"]) if x["score_5"] is not None else None,
+            }
             for x in items
         ]
 
