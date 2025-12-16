@@ -381,10 +381,60 @@
     {% endif %}
   </td>
 </tr>
-
 {% endfor %}
     </tbody>
   </table>
+
+  <h2>Jämförelse: viktat vs oviktat</h2>
+
+<h3>Underbeteenden</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Kluster</th>
+      <th>Underbeteende</th>
+      <th>Viktat</th>
+      <th>Oviktat</th>
+      <th>Diff</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in under_compare_rows %}
+      <tr>
+        <td>{{ r.cluster }}</td>
+        <td>{{ r.name }}</td>
+        <td>{{ r.weighted|floatformat:2 }}</td>
+        <td>{{ r.unweighted|floatformat:2 }}</td>
+        <td>{{ r.diff|floatformat:2 }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3>Huvudbeteenden</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Huvudbeteende</th>
+      <th>Viktat</th>
+      <th>Oviktat</th>
+      <th>Diff</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in cluster_compare_rows %}
+      <tr>
+        <td>{{ r.name }}</td>
+        <td>{{ r.weighted|floatformat:2 }}</td>
+        <td>{{ r.unweighted|floatformat:2 }}</td>
+        <td>{{ r.diff|floatformat:2 }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
 {% else %}
   <p>Ingen rapport att visa (ladda upp en Excel först).</p>
 {% endif %}
