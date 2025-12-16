@@ -1,9 +1,14 @@
+{% load static %}
 <!doctype html>
 <html lang="sv">
 <head>
   <meta charset="utf-8">
   <title>Kompetensrapport</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
 /* =========================
    UPLOAD / APP LAYOUT
@@ -51,13 +56,33 @@ body{
   margin-top:1rem;
 }
 
-.report-box{
-  margin-top:1.5rem;
-  border:1px solid #e5e7eb;
-  border-radius:14px;
-  padding:1.25rem;
-  background:#fff;
+.report-box {
+  position: relative;
+  margin-top: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.25rem;
+  background: #EEE8E4;
+  overflow: hidden; /* klipper zebran snyggt */
 }
+
+/* Zebramönster-toppen */
+.report-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 38px; /* justera höjden här */
+  
+  background-image: url("{% static 'reports/img/zebra-top-140x32-transparent.png' %}");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  
+  opacity: 0.85; /* lite elegant dämpning */
+  pointer-events: none;
+}
+
 
 .error{ color:#b91c1c; }
 
@@ -181,6 +206,180 @@ th{ font-weight:600; color:#374151; }
   font-size:13px;
   font-weight:600;
 }
+
+/* =========================
+   B3-ish tokens
+========================= */
+:root{
+  --b3-beige: #EEE8E4;
+  --b3-black: #111111;
+  --b3-grey: #404040;
+  --b3-line: rgba(17,17,17,0.10);
+  --b3-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  --b3-radius: 18px;
+
+  --b3-turquoise: #0CCCCCC; /* OBS: om du vill använda – annars ta bort */
+  --b3-blue: #426DA9;
+  --b3-pink: #DF668A;
+  --b3-yellow: #EFBD47;
+}
+
+/* =========================
+   Report box / layout
+========================= */
+.report-box{
+  position: relative;
+  border: 1px solid var(--b3-line);
+  border-radius: var(--b3-radius);
+  padding: 2rem;
+  background: var(--b3-beige);
+  box-shadow: var(--b3-shadow);
+  overflow: hidden;
+
+  /* typografi */
+  font-family: "Work Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--b3-black);
+  line-height: 1.55;
+}
+
+/* Zebra stripe på toppen */
+.report-box::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:38px;
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  opacity: 0.9;
+  pointer-events:none;
+
+  /* Django template static-path: byt vid behov */
+  background-image: url("/static/reports/img/zebra-top-140x32-transparent.png");
+}
+
+/* Lite extra luft så rubriken inte krockar med zebran */
+.report-box > *:first-child{
+  margin-top: 0.75rem;
+}
+
+/* =========================
+   Headings
+========================= */
+.report-box h1,
+.report-box h2,
+.report-box h3{
+  color: var(--b3-black);
+  letter-spacing: -0.02em;
+  margin: 1.4rem 0 0.6rem;
+  line-height: 1.15;
+}
+
+.report-box h1{ font-size: 2rem; font-weight: 800; }
+.report-box h2{ font-size: 1.55rem; font-weight: 800; }
+.report-box h3{ font-size: 1.15rem; font-weight: 700; }
+
+.report-box p{
+  margin: 0 0 0.85rem;
+  color: var(--b3-black);
+}
+
+/* Små “label”-rubriker som B3 använder ibland (svart tape) */
+.report-label{
+  display: inline-block;
+  background: var(--b3-black);
+  color: #fff;
+  padding: 0.32rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+/* HR / avdelare */
+.report-box hr{
+  border: none;
+  border-top: 1px solid var(--b3-line);
+  margin: 1.4rem 0;
+}
+
+/* =========================
+   Sections (valfritt men snyggt)
+========================= */
+.report-section{
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--b3-line);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.18);
+  margin: 1rem 0;
+}
+
+/* =========================
+   Tables
+========================= */
+.report-box table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.6rem;
+  font-size: 0.98rem;
+}
+
+.report-box th{
+  text-align: left;
+  font-weight: 700;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid var(--b3-line);
+  color: var(--b3-black);
+}
+
+.report-box td{
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid var(--b3-line);
+  vertical-align: top;
+  color: var(--b3-black);
+}
+
+/* mjuk zebra i tabellrader */
+.report-box tbody tr:nth-child(even){
+  background: rgba(255,255,255,0.14);
+}
+
+/* =========================
+   Lists / bullets
+========================= */
+.report-box ul,
+.report-box ol{
+  padding-left: 1.2rem;
+  margin: 0.4rem 0 1rem;
+}
+
+.report-box li{
+  margin: 0.25rem 0;
+}
+
+/* =========================
+   Callout boxes (valfria, men proffsiga)
+========================= */
+.report-callout{
+  border-left: 6px solid var(--b3-blue);
+  background: rgba(66,109,169,0.08);
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.report-callout strong{
+  font-weight: 700;
+}
+
+/* =========================
+   Small helpers
+========================= */
+.report-muted{ color: rgba(17,17,17,0.72); }
+.report-small{ font-size: 0.92rem; }
+
 
   </style>
 </head>
