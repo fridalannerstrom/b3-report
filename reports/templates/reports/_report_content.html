@@ -1,9 +1,62 @@
 {% if competencies %}
-  <h2>Rapport för {{ full_name }}</h2>
+<h2>Rapport för {{ full_name }}</h2>
 
 <!-- INLEDNING -->
 
-  <section class="report-section intro">
+<section class="report-section intro">
+
+<h2>Översikt: huvudbeteenden</h2>
+<div style="max-width: 650px; margin: 0 auto;">
+  <canvas id="radarChart" height="340"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{ radar_labels|json_script:"radar-labels" }}
+{{ radar_values|json_script:"radar-values" }}
+
+<script>
+  const labels = JSON.parse(document.getElementById("radar-labels").textContent);
+  const values = JSON.parse(document.getElementById("radar-values").textContent);
+
+  const ctx = document.getElementById("radarChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "radar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Total score",
+        data: values,
+        fill: true,
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }, // ✅ inga labels/legend
+        tooltip: {
+          enabled: false // ✅ inga siffror vid hover (om du vill)
+        }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 30,                 // ✅ 0–30 skala
+          ticks: { display: false }, // ✅ döljer 0,10,20,30
+          pointLabels: {
+            font: { size: 12 }
+          },
+          grid: { circular: true }
+        }
+      }
+    }
+  });
+</script>
+
   <h2>Inledning</h2>
 
   <p>
@@ -17,7 +70,7 @@
     hur effektiv personen sannolikt är i att omsätta kompetensen/beteendet i arbetet.
   </p>
 
-<!-- TOLKNING AV SKALA -->
+  <!-- TOLKNING AV SKALA -->
 
   <h3>Hur du tolkar den femgradiga skalan</h3>
 
@@ -84,177 +137,182 @@
   </p>
 
   {% for cluster in b3_clusters %}
-    <div class="b3-group">
+  <div class="b3-group">
 
-      <!-- HUVUDBETEENDE -->
-      <div class="b3-main">
-        <h3 class="b3-main-title">{{ cluster.name }}</h3>
-<div class="b3-scale">
-{% with steps=cluster.score_5_half_steps %}
-  {% if steps != None %}
-    {% for i in "12345" %}
-      {% with step=forloop.counter|add:forloop.counter %}
-        {% if steps >= step %}
-          <span class="dot filled"></span>
-        {% elif steps == step|add:"-1" %}
-          <span class="dot half"></span>
-        {% else %}
-          <span class="dot"></span>
-        {% endif %}
+<!-- HUVUDBETEENDE -->
+<div class="b3-main">
+  <h3 class="b3-main-title">{{ cluster.name }}</h3>
+
+  {# --- TOTAL SCORE donut --- #}
+  {% with max_total=40 %}
+    {# max_total är bara en placeholder för nu.
+       Sen kan vi räkna ut korrekt max per kluster dynamiskt. #}
+
+    {% if cluster.total_score != None %}
+      {% with pct=cluster.pct_total %}
+        <div class="donut-wrap">
+          <div class="donut" style="--p: {{ cluster.total_score|floatformat:0|add:'0' }};">
+            {# OBS: den här --p-linjen är “hackig” pga Django math-begränsningar.
+               Vi använder istället en enkel lösning nedan med data-attribut om du vill. #}
+            <div class="donut-label">{{ cluster.total_score|floatformat:1 }}</div>
+          </div>
+
+          <div class="donut-meta">
+            <div><strong>Total score:</strong> {{ cluster.total_score|floatformat:1 }}</div>
+            <div class="small-muted">Just nu visas siffran för att vi ska kunna verifiera. Tas bort senare.</div>
+            <div class="small-muted">Max (placeholder): {{ max_total }}</div>
+          </div>
+        </div>
       {% endwith %}
-    {% endfor %}
-  {% else %}
-    <span class="no-data">Ingen data</span>
-  {% endif %}
-{% endwith %}
-</div>
+    {% else %}
+      <span class="no-data">Ingen data</span>
+    {% endif %}
+  {% endwith %}
 
-{% if cluster.calc_debug %}
-  <details class="calc-details calc-cluster">
-    <summary class="calc-summary">Visa uträkning</summary>
+  {% if cluster.calc_debug %}
+    <details class="calc-details calc-cluster">
+      <summary class="calc-summary">Visa uträkning</summary>
 
-    <div class="calc-box">
+      <div class="calc-box">
+        {% if cluster.calc_human %}
+          <div class="calc-formula">
+            <strong>Så räknas det:</strong>
+            summa av (<em>underbeteende-score × underbeteendevikt</em>)
+          </div>
 
-      {% if cluster.calc_human %}
-        <div class="calc-formula">
-          <strong>Så räknas det:</strong>
-          (summa av <em>värde × vikt</em>) / (summa av vikter)
-        </div>
+          <div class="calc-line">
+            <strong>Uträkning:</strong> {{ cluster.calc_human.line }}
+          </div>
+        {% endif %}
 
-        <div class="calc-line">
-          <strong>Uträkning:</strong> {{ cluster.calc_human.line }}
-        </div>
-      {% endif %}
-
-      {% if cluster.calc_debug.items_used %}
-        <table class="calc-table">
-          <thead>
-            <tr>
-              <th>Underbeteende</th>
-              <th>Värde</th>
-              <th>Vikt</th>
-              <th>Värde × vikt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for it in cluster.calc_debug.items_used %}
+        {% if cluster.calc_debug.items_used %}
+          <table class="calc-table">
+            <thead>
               <tr>
-                <td>{{ it.underbehavior }}</td>
-                <td>{{ it.score|floatformat:2 }}</td>
-                <td>{{ it.weight|floatformat:0 }}</td>
-                <td>{{ it.weighted|floatformat:2 }}</td>
+                <th>Underbeteende</th>
+                <th>Värde</th>
+                <th>Vikt</th>
+                <th>Värde × vikt</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {% for it in cluster.calc_debug.items_used %}
+                <tr>
+                  <td>{{ it.underbehavior }}</td>
+                  <td>{{ it.score|floatformat:2 }}</td>
+                  <td>{{ it.weight|floatformat:0 }}</td>
+                  <td>{{ it.weighted|floatformat:2 }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
 
-        <div class="calc-result">
-          <strong>Resultat:</strong> {{ cluster.score_5|floatformat:2 }} / 5
-        </div>
-      {% else %}
-        <div class="no-data">Ingen data tillgänglig för detta huvudbeteende.</div>
-      {% endif %}
-
-    </div>
-  </details>
-{% endif %}
-
-      </div>
-
-      <!-- UNDERBETEENDEN -->
-      <div class="b3-under">
-        {% for u in b3_underbehaviors %}
-          {% if u.cluster == cluster.name %}
-            <div class="b3-under-row">
-              <div class="b3-under-name">{{ u.name }}</div>
-
-                <div class="b3-scale">
-{% with steps=u.score_5_half_steps %}
-  {% if steps != None %}
-    {% for i in "12345" %}
-      {% with step=forloop.counter|add:forloop.counter %}
-        {% if steps >= step %}
-          <span class="dot small filled"></span>
-        {% elif steps == step|add:"-1" %}
-          <span class="dot small half"></span>
+          <div class="calc-result">
+            <strong>Resultat (total score):</strong> {{ cluster.total_score|floatformat:2 }}
+          </div>
         {% else %}
-          <span class="dot small"></span>
+          <div class="no-data">Ingen data tillgänglig för detta huvudbeteende.</div>
         {% endif %}
-      {% endwith %}
-    {% endfor %}
-  {% else %}
-    <span class="no-data">Ingen data</span>
-  {% endif %}
-{% endwith %}
-
-
-</div>
-
-            </div>
-{# --- Debug/uträkning per underbeteende --- #}
-{% if u.calc_debug %}
-  <details class="calc-details">
-    <summary class="calc-summary">Visa uträkning</summary>
-
-    <div class="calc-box">
-      <div class="calc-formula">
-        <div class="calc-formula">
-  <strong>Så räknas det:</strong>
-  (summa av <em>värde × vikt</em>) / (summa av vikter)
-</div>
-
-{% if u.calc_human %}
-  <div class="calc-line">
-    <strong>Uträkning:</strong> {{ u.calc_human.line }}
-  </div>
-{% endif %}
       </div>
+    </details>
+  {% endif %}
+</div>
 
-      {% if u.calc_debug.components %}
-        <table class="calc-table">
-          <thead>
-            <tr>
-              <th>Kompetens</th>
-              <th>Värde</th>
-              <th>Vikt</th>
-              <th>Värde × vikt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for comp in u.calc_debug.components %}
+
+    <!-- UNDERBETEENDEN -->
+    <div class="b3-under">
+      {% for u in b3_underbehaviors %}
+      {% if u.cluster == cluster.name %}
+      <div class="b3-under-row">
+        <div class="b3-under-name">{{ u.name }}</div>
+
+        <div class="b3-scale">
+          {% with steps=u.score_5_half_steps %}
+          {% if steps != None %}
+          {% for i in "12345" %}
+          {% with step=forloop.counter|add:forloop.counter %}
+          {% if steps >= step %}
+          <span class="dot small filled"></span>
+          {% elif steps == step|add:"-1" %}
+          <span class="dot small half"></span>
+          {% else %}
+          <span class="dot small"></span>
+          {% endif %}
+          {% endwith %}
+          {% endfor %}
+          {% else %}
+          <span class="no-data">Ingen data</span>
+          {% endif %}
+          {% endwith %}
+
+
+        </div>
+
+      </div>
+      {# --- Debug/uträkning per underbeteende --- #}
+      {% if u.calc_debug %}
+      <details class="calc-details">
+        <summary class="calc-summary">Visa uträkning</summary>
+
+        <div class="calc-box">
+          <div class="calc-formula">
+            <div class="calc-formula">
+              <strong>Så räknas det:</strong>
+              (summa av <em>kompetensvärden</em>) / (antal kompetenser)
+            </div>
+
+            {% if u.calc_human %}
+            <div class="calc-line">
+              <strong>Uträkning:</strong> {{ u.calc_human.line }}
+            </div>
+            {% endif %}
+          </div>
+
+          {% if u.calc_debug.components %}
+          <table class="calc-table">
+            <thead>
+              <tr>
+                <th>Kompetens</th>
+                <th>Värde</th>
+                <th>Vikt</th>
+                <th>Värde × vikt</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for comp in u.calc_debug.components %}
               <tr>
                 <td>{{ comp.competency }}</td>
                 <td>{{ comp.score|floatformat:2 }}</td>
                 <td>{{ comp.weight|floatformat:2 }}</td>
                 <td>{{ comp.weighted|floatformat:2 }}</td>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+              {% endfor %}
+            </tbody>
+          </table>
 
-        <div class="calc-result">
-          <strong>Resultat:</strong> {{ u.score_5|floatformat:2 }} / 5
-        </div>
-      {% else %}
-        <div class="no-data">Ingen kompetensdata hittades för detta underbeteende.</div>
-      {% endif %}
-
-      {% if u.missing %}
-        <div class="calc-missing">
-          <strong>Saknas i Excel:</strong>
-          {{ u.missing|join:", " }}
-        </div>
-      {% endif %}
-    </div>
-  </details>
-{% endif %}
-
-
+          <div class="calc-result">
+            <strong>Resultat:</strong> {{ u.score_5|floatformat:2 }} / 5
+          </div>
+          {% else %}
+          <div class="no-data">Ingen kompetensdata hittades för detta underbeteende.</div>
           {% endif %}
-        {% endfor %}
-      </div>
 
+          {% if u.missing %}
+          <div class="calc-missing">
+            <strong>Saknas i Excel:</strong>
+            {{ u.missing|join:", " }}
+          </div>
+          {% endif %}
+        </div>
+      </details>
+      {% endif %}
+
+
+      {% endif %}
+      {% endfor %}
     </div>
+
+  </div>
   {% endfor %}
 </section>
 
@@ -267,39 +325,39 @@
   </p>
 
   {% for cluster in b3_clusters %}
-    <div class="map-card">
-      <div class="map-header">
-        <h3 class="map-title">{{ cluster.name }}</h3>
-      </div>
-
-      <div class="map-body">
-        {% for u in b3_underbehaviors %}
-          {% if u.cluster == cluster.name %}
-            <div class="map-row">
-              <div class="map-left">
-                <div class="map-behavior">{{ u.name }}</div>
-              </div>
-
-              <div class="map-mid" aria-hidden="true">
-                <span class="map-arrow">→</span>
-              </div>
-
-              <div class="map-right">
-                {% if u.competencies %}
-                  <div class="chip-wrap">
-                    {% for c in u.competencies %}
-                      <span class="chip">{{ c }}</span>
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  <span class="no-data">Ingen mappning</span>
-                {% endif %}
-              </div>
-            </div>
-          {% endif %}
-        {% endfor %}
-      </div>
+  <div class="map-card">
+    <div class="map-header">
+      <h3 class="map-title">{{ cluster.name }}</h3>
     </div>
+
+    <div class="map-body">
+      {% for u in b3_underbehaviors %}
+      {% if u.cluster == cluster.name %}
+      <div class="map-row">
+        <div class="map-left">
+          <div class="map-behavior">{{ u.name }}</div>
+        </div>
+
+        <div class="map-mid" aria-hidden="true">
+          <span class="map-arrow">→</span>
+        </div>
+
+        <div class="map-right">
+          {% if u.competencies %}
+          <div class="chip-wrap">
+            {% for c in u.competencies %}
+            <span class="chip">{{ c }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <span class="no-data">Ingen mappning</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
   {% endfor %}
 </section>
 
@@ -311,21 +369,21 @@
 
   <div class="tq-grid">
     {% for c in competencies %}
-      <div class="tq-row">
-        <div class="tq-name">{{ c.name }}</div>
+    <div class="tq-row">
+      <div class="tq-name">{{ c.name }}</div>
 
-        <div class="tq-scale">
-          {% for i in "12345" %}
-            <span class="dot {% if c.score_5_rounded >= i|add:'0' %}filled{% endif %}"></span>
-          {% endfor %}
-          <span class="tq-value">{{ c.score_5|floatformat:2 }} / 5</span>
-        </div>
+      <div class="tq-scale">
+        {% for i in "12345" %}
+        <span class="dot {% if c.score_5_rounded >= i|add:'0' %}filled{% endif %}"></span>
+        {% endfor %}
+        <span class="tq-value">{{ c.score_5|floatformat:2 }} / 5</span>
       </div>
+    </div>
     {% endfor %}
   </div>
 </section>
 
-  <h2>Resultat på B3:s ledarskapsbeteenden (huvudbeteenden)</h2>
+<h2>Resultat på B3:s ledarskapsbeteenden (huvudbeteenden)</h2>
 <table>
   <thead>
     <tr>
@@ -335,57 +393,61 @@
   </thead>
   <tbody>
     {% for item in b3_clusters %}
-<tr>
-  <td>{{ item.name }}</td>
-  <td>
-    {% if item.score_5 %}
-      {{ item.score_5|floatformat:2 }}
-    {% else %}
-      Ingen data
-    {% endif %}
-  </td>
-  <td>
-    {% if item.score_100 %}
-      {{ item.score_100|floatformat:1 }}
-    {% else %}
-      –
-    {% endif %}
-  </td>
-</tr>
-{% endfor %}
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>
+        {% if item.score_5 %}
+        {{ item.score_5|floatformat:2 }}
+        {% else %}
+        Ingen data
+        {% endif %}
+      </td>
+      <td>
+        {% if item.score_100 %}
+        {{ item.score_100|floatformat:1 }}
+        {% else %}
+        –
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
 
-  <h3>B3 Underbeteenden</h3>
-  <table>
-    <thead>
-      <tr><th>Huvudområde</th><th>Beteende</th><th>Värde (1–5)</th></tr>
-    </thead>
-    <tbody>
-      {% for item in b3_underbehaviors %}
-<tr>
-  <td>{{ item.cluster }}</td>
-  <td>{{ item.name }}</td>
-  <td>
-    {% if item.score_5 %}
-      {{ item.score_5|floatformat:2 }}
-    {% else %}
-      –
-    {% endif %}
-  </td>
-  <td>
-    {% if item.score_100 %}
-      {{ item.score_100|floatformat:1 }}
-    {% else %}
-      –
-    {% endif %}
-  </td>
-</tr>
-{% endfor %}
-    </tbody>
-  </table>
+<h3>B3 Underbeteenden</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Huvudområde</th>
+      <th>Beteende</th>
+      <th>Värde (1–5)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in b3_underbehaviors %}
+    <tr>
+      <td>{{ item.cluster }}</td>
+      <td>{{ item.name }}</td>
+      <td>
+        {% if item.score_5 %}
+        {{ item.score_5|floatformat:2 }}
+        {% else %}
+        –
+        {% endif %}
+      </td>
+      <td>
+        {% if item.score_100 %}
+        {{ item.score_100|floatformat:1 }}
+        {% else %}
+        –
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-  <h2>Jämförelse: viktat vs oviktat</h2>
+<h2>Jämförelse: viktat vs oviktat</h2>
 
 <h3>Underbeteenden</h3>
 <table>
@@ -400,13 +462,13 @@
   </thead>
   <tbody>
     {% for r in under_compare_rows %}
-      <tr>
-        <td>{{ r.cluster }}</td>
-        <td>{{ r.name }}</td>
-        <td>{{ r.weighted|floatformat:2 }}</td>
-        <td>{{ r.unweighted|floatformat:2 }}</td>
-        <td>{{ r.diff|floatformat:2 }}</td>
-      </tr>
+    <tr>
+      <td>{{ r.cluster }}</td>
+      <td>{{ r.name }}</td>
+      <td>{{ r.weighted|floatformat:2 }}</td>
+      <td>{{ r.unweighted|floatformat:2 }}</td>
+      <td>{{ r.diff|floatformat:2 }}</td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>
@@ -423,12 +485,12 @@
   </thead>
   <tbody>
     {% for r in cluster_compare_rows %}
-      <tr>
-        <td>{{ r.name }}</td>
-        <td>{{ r.weighted|floatformat:2 }}</td>
-        <td>{{ r.unweighted|floatformat:2 }}</td>
-        <td>{{ r.diff|floatformat:2 }}</td>
-      </tr>
+    <tr>
+      <td>{{ r.name }}</td>
+      <td>{{ r.weighted|floatformat:2 }}</td>
+      <td>{{ r.unweighted|floatformat:2 }}</td>
+      <td>{{ r.diff|floatformat:2 }}</td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>
@@ -436,5 +498,5 @@
 
 
 {% else %}
-  <p>Ingen rapport att visa (ladda upp en Excel först).</p>
+<p>Ingen rapport att visa (ladda upp en Excel först).</p>
 {% endif %}
