@@ -36,8 +36,7 @@
     {% include "reports/_report_content.html" %}
   </div>
 
-
-    <script>
+<script>
 (function () {
   const elLabels = document.getElementById("radar-labels");
   const elValues = document.getElementById("radar-values");
@@ -48,35 +47,76 @@
   const values = JSON.parse(elValues.textContent);
 
   const ctx = canvas.getContext("2d");
+
+  function wrapLabel(label, maxChars = 18) {
+    const words = label.split(" ");
+    const lines = [];
+    let current = "";
+
+    words.forEach(word => {
+      const next = current ? (current + " " + word) : word;
+      if (next.length <= maxChars) {
+        current = next;
+      } else {
+        if (current) lines.push(current);
+        current = word;
+      }
+    });
+
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  const wrappedLabels = labels.map(l => wrapLabel(l, 18));
+
   new Chart(ctx, {
     type: "radar",
     data: {
-      labels,
+      labels: wrappedLabels,  // ✅ använd wrapped labels här
       datasets: [{
         data: values,
+
+        borderColor: "#028081",
+        backgroundColor: "rgba(2, 128, 129, 0.20)",
+        borderWidth: 2.5,
         fill: true,
-        borderWidth: 2,
+
         pointRadius: 3,
-        pointHoverRadius: 4
+        pointHoverRadius: 4,
+        pointBackgroundColor: "#028081",
+        pointBorderColor: "#028081",
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+
       plugins: {
         legend: { display: false },
         tooltip: { enabled: false }
       },
+
       scales: {
         r: {
           min: 0,
           max: 30,
           ticks: { display: false },
-          pointLabels: { font: { size: 12 } },
-          grid: { circular: true }
+
+          angleLines: { color: "rgba(0,0,0,0.05)" },
+          grid: { circular: true, color: "rgba(0,0,0,0.06)" },
+
+          pointLabels: {
+            font: {
+              family: "'Work Sans', sans-serif",
+              size: 13,
+              weight: "600"
+            },
+            color: "#222",
+            padding: 12
+          }
         }
       }
-    }
+    } // ✅ stänger options
   });
 })();
 </script>
@@ -92,7 +132,7 @@
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: labels,
+        labels: wrappedLabels,
         datasets: [{ label: 'Kompetenspoäng', data: values }]
       },
       options: { responsive: true, scales: { y: { beginAtZero: true, max: 5 } } }

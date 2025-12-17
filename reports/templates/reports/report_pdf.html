@@ -13,50 +13,6 @@
   <div class="report-page">
     <h1>Kompetensrapport</h1>
     {% include "reports/_report_content.html" %}
-    <script>
-(function () {
-  const elLabels = document.getElementById("radar-labels");
-  const elValues = document.getElementById("radar-values");
-  const canvas = document.getElementById("radarChart");
-  if (!elLabels || !elValues || !canvas) return;
-
-  const labels = JSON.parse(elLabels.textContent);
-  const values = JSON.parse(elValues.textContent);
-
-  const ctx = canvas.getContext("2d");
-  new Chart(ctx, {
-    type: "radar",
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        fill: true,
-        borderWidth: 2,
-        pointRadius: 3,
-        pointHoverRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { enabled: false }
-      },
-      scales: {
-        r: {
-          min: 0,
-          max: 30,
-          ticks: { display: false },
-          pointLabels: { font: { size: 12 } },
-          grid: { circular: true }
-        }
-      }
-    }
-  });
-})();
-</script>
-
   </div>
 
   {% if competencies %}
