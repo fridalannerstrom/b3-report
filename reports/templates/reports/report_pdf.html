@@ -188,6 +188,18 @@ th{ font-weight:600; color:#374151; }
   font-size: 12px;
 }
 
+.radar-wrap{
+  width: 650px;
+  max-width: 100%;
+  height: 360px; /* ✅ Chart.js behöver en höjd när maintainAspectRatio=false */
+  margin: 0 auto;
+}
+#radarChart{
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
   </style>
 </head>
 <body>
@@ -211,54 +223,6 @@ th{ font-weight:600; color:#374151; }
       options: { responsive: true, animation: false, scales: { y: { beginAtZero: true, max: 5 } } }
     });
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-{{ radar_labels|json_script:"radar-labels" }}
-{{ radar_values|json_script:"radar-values" }}
-
-<script>
-  const labels = JSON.parse(document.getElementById("radar-labels").textContent);
-  const values = JSON.parse(document.getElementById("radar-values").textContent);
-
-  const ctx = document.getElementById("radarChart").getContext("2d");
-
-  new Chart(ctx, {
-    type: "radar",
-    data: {
-      labels,
-      datasets: [{
-        label: "Total score",
-        data: values,
-        fill: true,
-        borderWidth: 2,
-        pointRadius: 3,
-        pointHoverRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }, // ✅ inga labels/legend
-        tooltip: {
-          enabled: false // ✅ inga siffror vid hover (om du vill)
-        }
-      },
-      scales: {
-        r: {
-          min: 0,
-          max: 30,                 // ✅ 0–30 skala
-          ticks: { display: false }, // ✅ döljer 0,10,20,30
-          pointLabels: {
-            font: { size: 12 }
-          },
-          grid: { circular: true }
-        }
-      }
-    }
-  });
-</script>
-
   
   {% endif %}
 </body>

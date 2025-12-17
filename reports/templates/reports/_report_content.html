@@ -57,6 +57,52 @@
   });
 </script>
 
+{% if insights.most_natural and insights.needs_development %}
+  <div class="insight-cards">
+    <div class="insight-card">
+      <h3>Mest naturligt</h3>
+      <p><strong>{{ insights.most_natural.name }}</strong></p>
+      <p class="small-muted">Score (debug): {{ insights.most_natural.total_score|floatformat:1 }}</p>
+    </div>
+
+    <div class="insight-card">
+      <h3>Behöver utvecklas</h3>
+      <p><strong>{{ insights.needs_development.name }}</strong></p>
+      <p class="small-muted">Score (debug): {{ insights.needs_development.total_score|floatformat:1 }}</p>
+    </div>
+  </div>
+{% endif %}
+
+{% if insights.top_energy and insights.low_energy %}
+  <div class="energy-section">
+
+    <div class="energy-block positive">
+      <h3>Detta ger energi</h3>
+      <ul>
+        {% for u in insights.top_energy %}
+          <li>
+            <strong>{{ u.name }}</strong>
+            <span class="muted">({{ u.score_5|floatformat:1 }} / 5)</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="energy-block negative">
+      <h3>Detta tar energi</h3>
+      <ul>
+        {% for u in insights.low_energy %}
+          <li>
+            <strong>{{ u.name }}</strong>
+            <span class="muted">({{ u.score_5|floatformat:1 }} / 5)</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+{% endif %}
+
   <h2>Inledning</h2>
 
   <p>

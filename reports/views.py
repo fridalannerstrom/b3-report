@@ -567,7 +567,35 @@ def calculate_b3_underbehaviors_and_clusters(
         for c in clusters
     ]
 
-    return underbehaviors, clusters, calc_explain_text, under_compare_rows, cluster_compare_rows
+    # --- 3) Topp & botten (huvudbeteenden) ---
+    clusters_with_score = [c for c in clusters if c.get("total_score") is not None]
+
+    most_natural = max(clusters_with_score, key=lambda c: c["total_score"]) if clusters_with_score else None
+    needs_development = min(clusters_with_score, key=lambda c: c["total_score"]) if clusters_with_score else None
+
+    # --- 4) Energi-insikter (Top 3 / Bottom 3 underbeteenden) ---
+
+    valid_under = [u for u in underbehaviors if u.get("score_5") is not None]
+
+    top_3_energy = sorted(
+        valid_under,
+        key=lambda u: u["score_5"],
+        reverse=True
+    )[:3]
+
+    bottom_3_energy = sorted(
+        valid_under,
+        key=lambda u: u["score_5"]
+    )[:3]
+
+    insights = {
+        "most_natural": most_natural,
+        "needs_development": needs_development,
+        "top_energy": top_3_energy,
+        "low_energy": bottom_3_energy,
+    }
+
+    return underbehaviors, clusters, calc_explain_text, under_compare_rows, cluster_compare_rows, insights
 
 
 
@@ -665,6 +693,7 @@ def upload_view(request):
             calc_explain_text,
             under_compare_rows,
             cluster_compare_rows,
+            insights,
         ) = calculate_b3_underbehaviors_and_clusters(
             competency_values,
             B3_UNDERBEHAVIORS
@@ -679,6 +708,7 @@ def upload_view(request):
             "chart_values": values,
             "b3_underbehaviors": b3_underbehaviors,
             "b3_clusters": b3_clusters,
+            "insights": insights,
             "calc_explain_text": calc_explain_text,
             "under_compare_rows": under_compare_rows,
             "cluster_compare_rows": cluster_compare_rows,
