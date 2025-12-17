@@ -1,211 +1,62 @@
+{% load static %}
 <!doctype html>
 <html lang="sv">
 <head>
   <meta charset="utf-8">
   <title>Kompetensrapport</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-/* =========================
-   PDF PAGE LAYOUT
-   ========================= */
-
-body{
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  margin:0;
-  background:#EEE8E4;
-}
-
-.report-page{
-  max-width:794px;
-  margin:0 auto;
-  padding:24px;
-}
-
-
-/* =========================
-   REPORT CONTENT (B3 + TQ)
-   ========================= */
-
-.report-section{ margin-top:24px; }
-.report-section h2{ margin:0 0 8px; }
-.report-section p{ margin:6px 0 0; }
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:12px;
-}
-th,td{
-  border-bottom:1px solid #e5e7eb;
-  padding:6px 4px;
-  text-align:left;
-}
-th{ font-weight:600; color:#374151; }
-
-.no-data{ font-style:italic; color:#6b7280; }
-
-.b3-scale, .tq-scale{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-/* DOTS */
-.dot{
-  display:inline-block;
-  width:14px;
-  height:14px;
-  border-radius:999px;
-  border:2px solid #cbd5e1;
-  background:#fff;
-  box-sizing:border-box;
-}
-.dot.small{ width:10px; height:10px; }
-
-.dot.filled{
-  background:#6b5cff;
-  border-color:#6b5cff;
-}
-
-.dot.half{
-  background: linear-gradient(to right, #6b5cff 50%, #ffffff 50%);
-  border-color:#cbd5e1;
-}
-
-.b3-group{
-  margin-top:24px;
-  padding:16px;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-}
-
-.b3-main-title{
-  margin:0 0 8px;
-  font-size:1.1rem;
-}
-
-.b3-main{ margin-bottom:12px; }
-
-.b3-under-row{
-  display:grid;
-  grid-template-columns:1.5fr 1fr;
-  gap:12px;
-  padding:6px 0;
-  border-top:1px solid #f1f5f9;
-}
-
-.b3-value{ font-weight:600; margin-left:6px; }
-.b3-value.small{ font-size:.85rem; }
-
-/* CALC BOXES */
-.calc-details{ margin:6px 0 12px; }
-.calc-summary{ cursor:pointer; font-weight:600; }
-.calc-box{
-  margin-top:8px;
-  padding:10px 12px;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  background:#fafafa;
-}
-.calc-table{ margin-top:8px; font-size:.9rem; }
-.calc-formula, .calc-line, .calc-result, .calc-missing{ margin-top:8px; }
-
-/* MAPPING + CHIPS */
-.map-card{
-  border:1px solid #e5e7eb;
-  border-radius:16px;
-  background:#fff;
-  padding:16px;
-  margin-top:14px;
-}
-.map-row{
-  display:grid;
-  grid-template-columns:1.5fr 40px 1.5fr;
-  gap:12px;
-  padding:12px 0;
-  border-top:1px solid #f1f5f9;
-}
-.map-row:first-child{ border-top:none; padding-top:6px; }
-.map-behavior{ font-weight:600; }
-.map-arrow{ font-size:18px; color:#64748b; text-align:center; }
-
-.chip-wrap{ display:flex; flex-wrap:wrap; gap:8px; }
-.chip{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:999px;
-  background:#eef2ff;
-  color:#3730a3;
-  font-size:13px;
-  font-weight:600;
-}
-
-/* --- Minimal donut/progress för total score --- */
-.donut-wrap{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  margin-top:8px;
-  margin-bottom:8px;
-}
-
-.donut{
-  --p: 0;         /* 0..100 */
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  background: conic-gradient(#6b5bff calc(var(--p) * 1%), #e9e9ee 0);
-  position: relative;
-  flex: 0 0 auto;
-}
-
-.donut::after{
-  content:"";
-  position:absolute;
-  inset: 10px;
-  background: #fff;
-  border-radius: 50%;
-}
-
-.donut-label{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  font-size:14px;
-  z-index:1;
-}
-
-.donut-meta{
-  font-size: 13px;
-  line-height: 1.35;
-}
-
-.small-muted{
-  opacity: .7;
-  font-size: 12px;
-}
-
-.radar-wrap{
-  width: 650px;
-  max-width: 100%;
-  height: 360px; /* ✅ Chart.js behöver en höjd när maintainAspectRatio=false */
-  margin: 0 auto;
-}
-#radarChart{
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
-
-  </style>
+<link rel="stylesheet" href="{% static 'reports/css/report.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="report-page">
     <h1>Kompetensrapport</h1>
     {% include "reports/_report_content.html" %}
+    <script>
+(function () {
+  const elLabels = document.getElementById("radar-labels");
+  const elValues = document.getElementById("radar-values");
+  const canvas = document.getElementById("radarChart");
+  if (!elLabels || !elValues || !canvas) return;
+
+  const labels = JSON.parse(elLabels.textContent);
+  const values = JSON.parse(elValues.textContent);
+
+  const ctx = canvas.getContext("2d");
+  new Chart(ctx, {
+    type: "radar",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        fill: true,
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 30,
+          ticks: { display: false },
+          pointLabels: { font: { size: 12 } },
+          grid: { circular: true }
+        }
+      }
+    }
+  });
+})();
+</script>
+
   </div>
 
   {% if competencies %}

@@ -10,52 +10,8 @@
   <canvas id="radarChart" height="340"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 {{ radar_labels|json_script:"radar-labels" }}
 {{ radar_values|json_script:"radar-values" }}
-
-<script>
-  const labels = JSON.parse(document.getElementById("radar-labels").textContent);
-  const values = JSON.parse(document.getElementById("radar-values").textContent);
-
-  const ctx = document.getElementById("radarChart").getContext("2d");
-
-  new Chart(ctx, {
-    type: "radar",
-    data: {
-      labels,
-      datasets: [{
-        label: "Total score",
-        data: values,
-        fill: true,
-        borderWidth: 2,
-        pointRadius: 3,
-        pointHoverRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }, // ✅ inga labels/legend
-        tooltip: {
-          enabled: false // ✅ inga siffror vid hover (om du vill)
-        }
-      },
-      scales: {
-        r: {
-          min: 0,
-          max: 30,                 // ✅ 0–30 skala
-          ticks: { display: false }, // ✅ döljer 0,10,20,30
-          pointLabels: {
-            font: { size: 12 }
-          },
-          grid: { circular: true }
-        }
-      }
-    }
-  });
-</script>
 
 {% if insights.most_natural and insights.needs_development %}
   <div class="insight-cards">
@@ -189,31 +145,24 @@
 <div class="b3-main">
   <h3 class="b3-main-title">{{ cluster.name }}</h3>
 
-  {# --- TOTAL SCORE donut --- #}
-  {% with max_total=40 %}
-    {# max_total är bara en placeholder för nu.
-       Sen kan vi räkna ut korrekt max per kluster dynamiskt. #}
-
-    {% if cluster.total_score != None %}
-      {% with pct=cluster.pct_total %}
-        <div class="donut-wrap">
-          <div class="donut" style="--p: {{ cluster.total_score|floatformat:0|add:'0' }};">
-            {# OBS: den här --p-linjen är “hackig” pga Django math-begränsningar.
-               Vi använder istället en enkel lösning nedan med data-attribut om du vill. #}
-            <div class="donut-label">{{ cluster.total_score|floatformat:1 }}</div>
-          </div>
-
-          <div class="donut-meta">
-            <div><strong>Total score:</strong> {{ cluster.total_score|floatformat:1 }}</div>
-            <div class="small-muted">Just nu visas siffran för att vi ska kunna verifiera. Tas bort senare.</div>
-            <div class="small-muted">Max (placeholder): {{ max_total }}</div>
+      {% if cluster.total_score != None and cluster.pct_total != None %}
+      <div class="donut-wrap">
+        <div class="donut" style="--p: {{ cluster.pct_total|floatformat:4 }};">
+          <div class="donut-label">
+            {{ cluster.total_score|floatformat:1 }}
           </div>
         </div>
-      {% endwith %}
+
+        <div class="donut-meta">
+          <div><strong>Total score:</strong> {{ cluster.total_score|floatformat:1 }}</div>
+          <div class="small-muted">Max: {{ cluster.max_total|floatformat:0 }}</div>
+          {# ta bort raden ovan sen, den är bara för kontroll #}
+        </div>
+      </div>
     {% else %}
-      <span class="no-data">Ingen data</span>
+      <div class="no-data">Ingen data</div>
     {% endif %}
-  {% endwith %}
+
 
   {% if cluster.calc_debug %}
     <details class="calc-details calc-cluster">
