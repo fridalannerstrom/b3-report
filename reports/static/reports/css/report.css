@@ -201,7 +201,6 @@ h1{
 .report-surface p{
   font-size: 14px;
   line-height: 1.7;
-  color: var(--muted);
   margin: 0 0 14px;
 }
 
@@ -314,6 +313,7 @@ h1{
   border-radius: 18px;
   overflow: hidden;
   margin-top: 18px;
+  margin-bottom: 130px;
 }
 
 .scale-row{
@@ -387,6 +387,160 @@ h1{
     padding-left: 0;
   }
 }
+
+/* ---------------------------------------
+   Overview page (radar + two big cards)
+---------------------------------------- */
+
+.page-overview{
+  max-width: 900px;
+}
+
+.page-header.center{
+  text-align: center;
+  margin: 0 auto 20px;
+}
+
+.page-title-xl{
+  margin: 0 0 10px;
+  font-size: 44px;
+  line-height: 1.06;
+  letter-spacing: -0.6px;
+  font-weight: 800;
+  color: #111;
+}
+
+.page-subtitle{
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgb(0, 0, 0);
+}
+
+/* Radar area */
+.radar-wrap{
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 26px;
+}
+
+.radar-card{
+  width: min(430px, 100%);
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 18px;
+  box-shadow: 0 10px 22px rgba(0,0,0,.06);
+  padding: 16px;
+}
+
+.radar-inner{
+  background: rgba(255,255,255,.10);
+  border-radius: 14px;
+  padding: 10px 10px 6px;
+  margin-bottom: 60px;
+}
+
+/* Two cards grid */
+.overview-cards{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.overview-card{
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 18px;
+  box-shadow: 0 10px 22px rgba(0,0,0,.06);
+  overflow: hidden;
+  padding: 18px 18px 16px;
+
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* top/left text area */
+.overview-card__title{
+  margin: 10px 0 10px;
+  font-size: 20px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: #111;
+  max-width: 26ch;
+}
+
+.overview-card__desc{
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+  color: rgba(0,0,0,.62);
+  max-width: 55ch;
+}
+
+/* mini black label like screenshot */
+.mini-label{
+  display: inline-block;
+  color: #000000;
+  font-size: 14px;
+  text-transform: uppercase;
+
+  font-family: "B3Label", "Work Sans", sans-serif;
+}
+
+/* right column */
+.overview-card__bottom{
+  padding-top: 2px;
+}
+
+/* “pill rows” */
+.pill-list{
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.pill{
+  background: rgba(255,255,255,.20);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 6px 14px rgba(0,0,0,.05);
+}
+
+.pill--muted{
+  background: rgba(255,255,255,.16);
+}
+
+.pill__text{
+  display: block;
+  font-size: 11px;
+  line-height: 1.55;
+  color: rgba(0,0,0,.70);
+}
+
+.pill strong{
+  font-weight: 800;
+  color: rgba(0,0,0,.88);
+}
+
+/* Responsive */
+@media (max-width: 860px){
+  .page-title-xl{ font-size: 38px; }
+  .overview-card{
+    grid-template-columns: 1fr;
+  }
+  .overview-card__title{
+    max-width: unset;
+  }
+}
+@media (max-width: 640px){
+  .page-title-xl{ font-size: 32px; }
+}
+
 
 
 /* ---------------------------------------

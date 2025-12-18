@@ -41,7 +41,7 @@
   </p>
   </div>
 
-  
+
   <div class="scale-card">
     <!-- Rad 1 -->
     <div class="scale-row">
@@ -121,10 +121,107 @@
 </section>
 
 
+<section class="page page-overview">
+
+  <header class="page-header center">
+    <h2 class="page-title-xl">Översikt över dina<br>ledarskapsbeteenden</h2>
+    <p class="page-subtitle">
+      Denna rapport bygger helt på din egen skattning av hur du<br>
+      brukar agera i olika arbetssituationer.
+    </p>
+  </header>
+
+      <div class="radar-inner">
+        <canvas id="radarChart" height="340"></canvas>
+      </div>
+
+  {{ radar_labels|json_script:"radar-labels" }}
+  {{ radar_values|json_script:"radar-values" }}
+
+  {% if insights.most_natural and insights.needs_development %}
+    <div class="overview-cards">
+
+      <!-- Card 1: Mest naturligt -->
+      <article class="overview-card">
+        <div class="overview-card__top">
+          <div class="mini-label">DITT MEST NATURLIGA BETEENDE</div>
+          <h3 class="overview-card__title">{{ insights.most_natural.name }}</h3>
+          {% if insights.most_natural.description %}
+            <p class="overview-card__desc">{{ insights.most_natural.description }}</p>
+          {% else %}
+            <p class="overview-card__desc">
+              Detta är ett beteende som faller dig naturligt och som du ofta använder utan större ansträngning.
+            </p>
+          {% endif %}
+        </div>
+
+        <div class="overview-card__bottom">
+          <div class="mini-label">DET SOM GER DIG ENERGI</div>
+
+          {% if insights.top_energy %}
+            <div class="pill-list">
+              {% for u in insights.top_energy %}
+                <div class="pill">
+                  <span class="pill__text">
+                    Jag {% if u.short_statement %}{{ u.short_statement }}{% else %}upplever att {{ u.name|lower }} ofta stärker mitt driv{% endif %}
+                  </span>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="pill-list">
+              <div class="pill"><span class="pill__text">Jag får energi av att arbeta med tydlighet och riktning</span></div>
+              <div class="pill"><span class="pill__text">Jag stärker samarbete genom att lyfta andra</span></div>
+              <div class="pill"><span class="pill__text">Jag får energi när jag ser resultat av mitt arbete</span></div>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+
+      <!-- Card 2: Behöver utvecklas -->
+      <article class="overview-card">
+        <div class="overview-card__top">
+          <div class="mini-label">BETEENDE DU BEHÖVER UTVECKLA</div>
+          <h3 class="overview-card__title">{{ insights.needs_development.name }}</h3>
+          {% if insights.needs_development.description %}
+            <p class="overview-card__desc">{{ insights.needs_development.description }}</p>
+          {% else %}
+            <p class="overview-card__desc">
+              Detta är ett beteende som kan kräva mer medveten ansträngning i vissa situationer, men som ofta går att stärka med små, konkreta steg.
+            </p>
+          {% endif %}
+        </div>
+
+        <div class="overview-card__bottom">
+          <div class="mini-label">DET SOM TAR ENERGI FRÅN DIG</div>
+
+          {% if insights.low_energy %}
+            <div class="pill-list">
+              {% for u in insights.low_energy %}
+                <div class="pill pill--muted">
+                  <span class="pill__text">
+                    Jag {% if u.short_statement %}{{ u.short_statement }}{% else %}kan uppleva att {{ u.name|lower }} tar mer energi än det ger{% endif %}
+                  </span>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="pill-list">
+              <div class="pill pill--muted"><span class="pill__text">Jag behöver mer energi när jag måste driva igenom beslut utan samsyn</span></div>
+              <div class="pill pill--muted"><span class="pill__text">Jag blir trött när kommunikationen blir otydlig eller rörig</span></div>
+              <div class="pill pill--muted"><span class="pill__text">Jag behöver extra ansträngning när jag måste växla tempo snabbt</span></div>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+
+    </div>
+  {% endif %}
+
+</section>
 
 
 {% if competencies %}
-<h2>Rapport för {{ full_name }}</h2>
 
 <!-- INLEDNING -->
 
