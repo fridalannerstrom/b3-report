@@ -581,8 +581,8 @@ h1{
 /* Each row */
 .result-row{
   display: grid;
-  grid-template-columns: 1fr 120px;
-  gap: 14px;
+  grid-template-columns: 1fr 160px;
+  gap: 10px;
   align-items: center;
 
   background: rgb(255, 255, 255);
@@ -604,20 +604,20 @@ h1{
 .b3-scale--small{
   display: flex;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 18px;
 }
 
 .b3-scale--small .dot{
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 999px;
   background: transparent;
   border: 3px solid #C1D5D1;
 }
 
 .b3-scale--small .dot--small{
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-width: 3px;
 }
 
