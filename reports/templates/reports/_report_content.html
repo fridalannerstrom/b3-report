@@ -1,3 +1,128 @@
+<!-- Zebra header (upprepas på varje sida i PDF) -->
+<div class="zebra-header" aria-hidden="true"></div>
+
+<section class="page page-intro">
+  <div class="section-label">INLEDNING</div>
+
+  <h2 class="page-title">Om självskattning och naturligt beteende</h2>
+
+  <div class="lead">
+    <p>
+      Denna rapport bygger enbart på <strong>din egen skattning</strong> av hur du brukar agera i olika
+      arbetssituationer.
+    </p>
+  </div>
+
+  <div class="body-text">
+    <p>
+      Resultaten ska därför inte ses som ett facit eller som en beskrivning av hur du kan eller bör
+      bete dig i alla sammanhang. De speglar i stället de beteenden som i nuläget faller dig mest
+      naturligt, samt de områden där du oftast hämtar energi i ditt ledarskap.
+    </p>
+
+    <p>
+      Eftersom olika beteenden fyller olika funktioner är det varken möjligt eller eftersträvansvärt att
+      ligga högt på allt. Rapporten visar i stället vilka arbetssätt som kommer lätt för dig och var du i
+      vissa situationer kan behöva en mer medveten anpassning, beroende på sammanhang och krav i rollen.
+    </p>
+
+    <p>
+      Rapporten är ett verktyg för självinsikt och reflektion, inte en värdering av prestation eller
+      förmåga. Den kan hjälpa dig att förstå vilka beteenden som kommer mer naturligt för dig, och vilka
+      som kan kräva mer energi att använda. Tillsammans utgör dessa en grund för fortsatt utveckling inom
+      ramen för B3:s ledarskapsprogram.
+    </p>
+  </div>
+
+  <h3 class="section-title">Tolkning av skalan</h3>
+  <div class="body-text">
+  <p>
+    Skalan beskriver i vilken grad olika beteenden upplevs som naturliga och energigivande för dig.
+  </p>
+  </div>
+
+  
+  <div class="scale-card">
+    <!-- Rad 1 -->
+    <div class="scale-row">
+      <div class="dots" aria-label="Skalnivå 1 av 5">
+        <span class="dot is-on"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="scale-text">
+        Detta beteende ligger i nuläget <strong>långt ifrån</strong> ditt naturliga sätt att agera och kan
+        <strong>kräva mer</strong> medveten ansträngning och energi att använda.
+      </div>
+    </div>
+
+    <!-- Rad 2 -->
+    <div class="scale-row">
+      <div class="dots" aria-label="Skalnivå 2 av 5">
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="scale-text">
+        Detta beteende känns <strong>mindre naturligt</strong> för dig och kan i många situationer upplevas som
+        <strong>mer energikrävande</strong> än energigivande.
+      </div>
+    </div>
+
+    <!-- Rad 3 -->
+    <div class="scale-row">
+      <div class="dots" aria-label="Skalnivå 3 av 5">
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="scale-text">
+        Detta beteende kan du <strong>använda vid behov</strong> och upplevs ofta som (över tid)
+        <strong>energimässigt neutralt</strong>, ibland naturligt, ibland mindre.
+      </div>
+    </div>
+
+    <!-- Rad 4 -->
+    <div class="scale-row">
+      <div class="dots" aria-label="Skalnivå 4 av 5">
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="scale-text">
+        Detta beteende <strong>ligger nära</strong> ditt naturliga sätt att agera och ger dig i många sammanhang
+        sannolikt <strong>energi att använda</strong>.
+      </div>
+    </div>
+
+    <!-- Rad 5 -->
+    <div class="scale-row">
+      <div class="dots" aria-label="Skalnivå 5 av 5">
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+      </div>
+      <div class="scale-text">
+        Detta beteende är <strong>mycket naturligt</strong> för dig och upplevs i många situationer som
+        <strong>energigivande</strong> och <strong>lätt att agera utifrån</strong>.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
 {% if competencies %}
 <h2>Rapport för {{ full_name }}</h2>
 
@@ -490,6 +615,91 @@
   </tbody>
 </table>
 
+
+<section class="pdf-page">
+
+  <!-- Kluster / huvudbeteende (kontext) -->
+  <header class="cluster-header">
+    <h1>Affärs- och värderingsdrivet ledarskap</h1>
+    <div class="cluster-score">
+      <span class="label">Övergripande</span>
+      <div class="dots" aria-label="Övergripande resultat 3 av 5">
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot is-on"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Underbeteende (fokus) -->
+  <article class="focus-card">
+    <div class="focus-top">
+      <h2>Jag driver försäljning och bygger långsiktiga kundrelationer</h2>
+
+      <div class="focus-score">
+        <span class="label">Resultat</span>
+        <div class="dots dots--lg" aria-label="Underbeteende resultat 4 av 5">
+          <span class="dot is-on"></span>
+          <span class="dot is-on"></span>
+          <span class="dot is-on"></span>
+          <span class="dot is-on"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <p class="focus-interpretation">
+      Tolkning (kort): Du visar detta beteende ofta och det faller i många situationer naturligt.
+    </p>
+  </article>
+
+  <!-- Kompetenser (förklaring, sekundär vikt) -->
+  <section class="competencies">
+    <h3>Bakomliggande TQ-kompetenser</h3>
+    <p class="meta">
+      Kompetenserna nedan bidrar till resultatet ovan. De visas med en nedtonad skala för att inte konkurrera med underbeteendet.
+    </p>
+
+    <div class="competency-list">
+
+      <div class="competency-row">
+        <div class="comp-text">
+          <div class="comp-title">Leda andra</div>
+          <div class="comp-desc">Ger tydlig riktning och stor uppmuntran för att säkerställa att andra framgångsrikt uppnår sina mål.</div>
+        </div>
+
+        <div class="comp-score" aria-label="Kompetensresultat 3 av 5">
+          <div class="mini-bar">
+            <span class="fill fill-3"></span>
+          </div>
+          <div class="mini-scale">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="competency-row">
+        <div class="comp-text">
+          <div class="comp-title">Resultatorientering</div>
+          <div class="comp-desc">Fokuserar på att leverera enligt mål och driva arbetet framåt med uthållighet.</div>
+        </div>
+
+        <div class="comp-score" aria-label="Kompetensresultat 4 av 5">
+          <div class="mini-bar">
+            <span class="fill fill-4"></span>
+          </div>
+          <div class="mini-scale">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</section>
 
 
 {% else %}

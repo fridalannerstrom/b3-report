@@ -1,422 +1,416 @@
-/* =========================
-   Base / app layout
-========================= */
-:root{
-  --bg: #ffffff;
-  --card: #ffffff;
-  --ink: #111111;
-  --muted: rgba(17,17,17,0.68);
-  --line: rgba(17,17,17,0.10);
-  --shadow: 0 18px 40px rgba(15,23,42,.12);
-  --radius: 18px;
-
-  /* B3-ish */
-  --b3-beige: #EEE8E4;
-  --b3-accent: #6f5cff;
-  --chip-bg: #eef2ff;
-  --chip-ink: #3730a3;
+@font-face {
+  font-family: "B3Label";
+  src: url("../fonts/B3Label.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-*{ box-sizing: border-box; }
+/* ---------------------------------------
+   Base
+---------------------------------------- */
+:root{
+  --bg: #f5f6f7;
+  --card: #ffffff;
+  --ink: #111;
+  --muted: rgba(0,0,0,.65);
+  --line: rgba(0,0,0,.08);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+
+  --shadow: 0 10px 30px rgba(0,0,0,.08);
+  --shadow-soft: 0 8px 20px rgba(0,0,0,.06);
+
+  --brand: #028081;           /* knappfärg liknande screenshot */
+  --brand-hover: #056969;
+  --brand-ink: #ffffff;
+
+  --report-bg: #efe9e4;       /* “beige PDF-yta” */
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
 
 body{
-  margin:0;
-  padding:2rem;
-  background: #ffffff;
-  color: var(--ink);
+  margin: 0;
   font-family: "Work Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
 }
 
-/* container on upload page */
+/* ---------------------------------------
+   Layout container
+---------------------------------------- */
 .container{
-  max-width: 980px;
-  margin: 0 auto;
+  width: min(880px, calc(100% - 40px));
+  margin: 40px auto 80px;
 }
 
 h1{
+  font-size: 20px;
+  font-weight: 800;
   margin: 0 0 14px;
-  font-size: 1.8rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.2px;
 }
 
-/* upload box */
+/* ---------------------------------------
+   Upload box (top card)
+---------------------------------------- */
 .upload-box{
   background: var(--card);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: var(--shadow);
-  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 18px 16px;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 22px;
 }
 
-.upload-box form p{
-  margin: 0 0 10px;
+.upload-box form{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
-.upload-box input[type="file"]{
-  display:block;
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px dashed rgba(0,0,0,0.18);
-  background: #fafafa;
-}
-
-/* buttons */
-.btn{
-  display:inline-block;
-  padding:.62rem 1.25rem;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  text-decoration: none;
-  line-height: 1;
-}
-
-.btn-primary{ background: var(--b3-accent); color:#fff; }
-.btn-secondary{
-  background: rgba(17,17,17,0.08);
-  color: var(--ink);
-  margin-top: 14px;
-}
-
-.message.error, .error{ color:#b91c1c; }
-
-/* =========================
-   Preview card (upload page)
-========================= */
-.preview-card{
-  background: var(--card);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.preview-head{
-  padding: 16px 18px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  background: #fff;
-}
-
-.preview-title{
+/* Django form.as_p styling */
+.upload-box p{
   margin: 0;
-  font-size: 1.1rem;
 }
 
-.preview-sub{
-  margin: 6px 0 0;
-  color: var(--muted);
-  font-size: .95rem;
+.upload-box label{
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: rgba(0,0,0,.8);
 }
 
-/* surface where the actual report sits */
+/* File input */
+.upload-box input[type="file"]{
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+/* Buttons */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.btn:active{ transform: translateY(1px); }
+
+.btn-primary{
+  background: var(--brand);
+  color: var(--brand-ink);
+  box-shadow: 0 10px 18px rgba(91,92,246,.18);
+  width: fit-content;
+}
+
+.btn-primary:hover{
+  background: var(--brand-hover);
+}
+
+.btn-secondary{
+  background: rgba(0,0,0,.06);
+  color: rgba(0,0,0,.85);
+  border: 1px solid rgba(0,0,0,.08);
+}
+
+.btn-secondary:hover{
+  background: rgba(0,0,0,.08);
+}
+
+/* Messages */
+.message{
+  margin: 10px 0 0;
+  font-size: 14px;
+}
+.message.error{
+  color: #b42318;
+}
+
+/* ---------------------------------------
+   Preview (PDF/Report surface)
+---------------------------------------- */
+.preview-card{
+  background: transparent;
+}
+
+/* The “big rounded preview” */
 .report-surface{
   position: relative;
-  background: var(--b3-beige);
-  padding: 22px 22px 26px;
+  background: var(--report-bg);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
   overflow: hidden;
-
+  padding: 150px 100px 64px; /* luftigt som en sida */
+  min-height: 680px;
 }
 
-/* Zebra top strip */
+/* Zebra top stripe */
 .report-surface::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height: 38px;
-  background-image: url("/static/reports/img/zebra-top-140x32-transparent.svg");
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 44px;
+  width: 100%;
+
+  /* Lägg din zebra-bild här (lägg bilden i static/reports/img/...) */
+  background-image: url("../img/zebra-top-140x32-transparent.svg");
   background-repeat: repeat-x;
   background-size: auto 100%;
-  opacity: 0.9;
+  opacity: .95;
   pointer-events: none;
 }
 
-/* add breathing room below zebra */
-.report-surface > *:first-child{
-  margin-top: 12px;
-}
-
-/* =========================
-   Report typography
-   Works in both upload preview and pdf page
-========================= */
-.report-surface h2,
-.report-page h2{
-  margin: 1.2rem 0 .6rem;
-  font-size: 1.55rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.report-surface h3,
-.report-page h3{
-  margin: 1rem 0 .5rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.report-surface p,
-.report-page p{
-  margin: 0 0 .85rem;
-  color: var(--ink);
-  line-height: 1.55;
-}
-
-.note{
-  color: var(--muted);
-  font-size: .95rem;
-}
-
-/* =========================
-   Sections
-========================= */
-.report-section{
-  margin: 1rem 0;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.18);
-}
-
-/* =========================
-   Radar chart
-========================= */
-#radarChart{
-  display:block;
-  width: 100% !important;
-  height: 340px !important;
-  margin: 0 auto;
-}
-
-/* =========================
-   Insights / energy blocks
-========================= */
-.insight-cards{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 12px 0 6px;
-}
-
-.insight-card{
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.35);
-  padding: 12px 14px;
-}
-
-.small-muted{
-  color: var(--muted);
-  font-size: .9rem;
-}
-
-.energy-section{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 12px 0 6px;
-}
-
-.energy-block{
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.35);
-  padding: 12px 14px;
-}
-
-.energy-block ul{
-  margin: 8px 0 0;
-  padding-left: 18px;
-}
-
-.energy-block li{
-  margin: 6px 0;
-}
-
-.muted{ color: var(--muted); }
-
-/* Mobile */
-@media (max-width: 760px){
-  .insight-cards, .energy-section{ grid-template-columns: 1fr; }
-}
-
-/* =========================
-   Tables
-========================= */
-table{
-  width:100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 0.98rem;
-}
-
-th, td{
-  padding: .8rem .7rem;
-  border-bottom: 1px solid var(--line);
-  text-align:left;
-  vertical-align: top;
-}
-
-thead th{
-  font-weight: 800;
-}
-
-/* =========================
-   Dots / scales
-========================= */
-.b3-scale, .tq-scale{
-  display:flex;
-  align-items:center;
-  gap: 8px;
-}
-
-.dot{
-  display:inline-block;
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  border: 2px solid rgba(0,0,0,0.18);
-  background: rgba(255,255,255,0.85);
-}
-
-.dot.small{ width: 10px; height: 10px; }
-
-.dot.filled{
-  background: var(--b3-accent);
-  border-color: var(--b3-accent);
-}
-
-.dot.half{
-  background: linear-gradient(to right, var(--b3-accent) 50%, rgba(255,255,255,0.9) 50%);
-  border-color: rgba(0,0,0,0.18);
-}
-
-.no-data{ font-style: italic; color: var(--muted); }
-
-/* =========================
-   B3 groups
-========================= */
-.b3-group{
-  margin-top: 14px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.20);
-}
-
-.b3-main-title{ margin: 0 0 8px; }
-
-.b3-under-row{
-  display:grid;
-  grid-template-columns: 1.7fr 1fr;
-  gap: 12px;
-  padding: 8px 0;
-  border-top: 1px solid rgba(0,0,0,0.06);
-}
-
-/* =========================
-   Donut (total score)
-========================= */
-.donut-wrap{
-  display:flex;
-  align-items:center;
-  gap: 16px;
-  margin: 12px 0 6px;
-}
-
-.donut{
-  /* --p: 0..1 */
-  --p: 0;
-  --size: 92px;
-  --thickness: 14px;
-
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  position: relative;
-
-  background: conic-gradient(var(--b3-accent) calc(var(--p) * 100%), rgba(0,0,0,0.10) 0);
-}
-
-.donut::before{
-  content:"";
-  position:absolute;
-  inset: var(--thickness);
-  background: var(--b3-beige);
-  border-radius: 50%;
-}
-
-.donut-label{
-  position:absolute;
+/* Optional: lite “paper inset” känsla */
+.report-surface::after{
+  content: "";
+  position: absolute;
   inset: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+  pointer-events: none;
+}
+
+/* “PDF content” typografi inne i previewn (så det känns som screenshot) */
+.report-surface h2{
+  font-size: 34px;
+  line-height: 1.1;
+  margin: 20px 0 30px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.report-surface p{
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+/* Small label header like “INLEDNING” */
+.report-surface .chip,
+.report-surface .tag{
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
   font-weight: 800;
-  font-size: 18px;
+  background: #111;
+  color: #fff;
+  padding: 7px 10px;
+  border-radius: 10px;
+  margin-bottom: 16px;
 }
 
-/* =========================
-   Calc boxes
-========================= */
-.calc-details{ margin: 6px 0 12px; }
-.calc-summary{ cursor:pointer; font-weight: 800; }
-
-.calc-box{
-  margin-top: 10px;
-  padding: 12px 14px;
-  border: 1px solid rgba(0,0,0,0.10);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.70);
+/* Spacing around the download button under preview */
+.preview-card .btn-secondary{
+  margin-top: 14px;
 }
 
-/* =========================
-   Mapping cards + chips
-========================= */
-.map-card{
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: rgba(255,255,255,0.35);
-  padding: 14px;
-  margin-top: 12px;
+.section-label{
+  display: inline-block;
+  color: #000000;
+  font-family: "B3Label", "Work Sans", sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
 }
 
-.map-row{
-  display:grid;
-  grid-template-columns: 1.5fr 40px 1.5fr;
-  gap: 12px;
-  padding: 12px 0;
-  border-top: 1px solid rgba(0,0,0,0.06);
+
+/* ---------------------------------------
+   Intro page (matches screenshot)
+---------------------------------------- */
+
+.page{
+  max-width: 840px;
 }
 
-.map-row:first-child{ border-top: none; padding-top: 6px; }
-
-.map-arrow{
-  display:block;
-  text-align:center;
-  opacity:.55;
+.page-intro{
+  padding-top: 6px;
 }
 
-.chip-wrap{ display:flex; flex-wrap:wrap; gap: 8px; }
-.chip{
-  display:inline-block;
-  padding: 6px 10px;
+/* Label (INLEDNING) */
+.section-label{
+  display: inline-block;
+  color: #000000;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+
+  /* om du har eget typsnitt här: */
+  font-family: "B3Label", "Work Sans", sans-serif;
+
+  margin: 0 0 18px;
+}
+
+.page-title{
+  margin: 0 0 18px;
+  font-size: 44px;
+  line-height: 1.06;
+  letter-spacing: -0.6px;
+  font-weight: 800;
+  color: #111;
+}
+
+.lead p{
+  margin: 0 0 22px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgb(0, 0, 0);
+}
+
+.body-text p{
+  margin: 0 0 18px;
+  font-size: 14px;
+  line-height: 1.85;
+  color: rgb(0, 0, 0);
+}
+
+.body-text strong,
+.lead strong{
+  color: rgba(0,0,0,.88);
+  font-weight: 800;
+}
+
+.section-title{
+  margin: 60px 0 12px;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #111;
+}
+
+.section-subtitle{
+  margin: 0 0 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(0,0,0,.62);
+  max-width: 75ch;
+}
+
+/* ---------------------------------------
+   Scale card with dots
+---------------------------------------- */
+
+.scale-card{
+  background: rgba(255, 255, 255, 0.342);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+.scale-row{
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 22px;
+
+  padding: 16px 18px;
+  align-items: center;
+
+  border-top: 1px solid rgba(0, 0, 0, 0.123);
+}
+
+.scale-row:first-child{
+  border-top: 0;
+}
+
+/* dots group */
+.dots{
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding-left: 6px;
+}
+
+/* dot default (hollow) */
+.dot{
+  width: 18px;
+  height: 18px;
   border-radius: 999px;
-  background: var(--chip-bg);
-  color: var(--chip-ink);
-  font-size: 13px;
-  font-weight: 800;
+
+  background: transparent;
+  border: 3px solid #C1D5D1;
 }
 
-/* =========================
-   PDF page wrapper support
-========================= */
-.report-page{
-  max-width: 794px;
-  margin: 0 auto;
-  padding: 24px;
-  background: var(--b3-beige);
+/* dot filled */
+.dot.is-on{
+  background: #028081;
+  border-color: #C1D5D1;
+}
+
+.scale-text{
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(0,0,0,.70);
+  max-width: 68ch;
+}
+
+.scale-text strong{
+  font-weight: 800;
+  color: rgba(0,0,0,.88);
+}
+
+/* ---------------------------------------
+   Responsive tweaks
+---------------------------------------- */
+@media (max-width: 900px){
+  .page-title{ font-size: 38px; }
+  .scale-row{ grid-template-columns: 190px 1fr; }
+  .dots{ gap: 14px; }
+}
+
+@media (max-width: 640px){
+  .page-title{ font-size: 32px; }
+
+  .scale-row{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .dots{
+    padding-left: 0;
+  }
+}
+
+
+/* ---------------------------------------
+   Responsive
+---------------------------------------- */
+@media (max-width: 900px){
+  .report-surface{
+    padding: 50px 40px 56px;
+  }
+  .report-surface h2{
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 640px){
+  .container{
+    width: calc(100% - 24px);
+    margin: 24px auto 60px;
+  }
+  .report-surface{
+    padding: 46px 18px 44px;
+    min-height: 560px;
+  }
+  .report-surface::before{
+    height: 38px;
+  }
 }
