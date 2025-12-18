@@ -198,7 +198,7 @@
           {% if insights.low_energy %}
             <div class="pill-list">
               {% for u in insights.low_energy %}
-                <div class="pill pill--muted">
+                <div class="pill">
                   <span class="pill__text">
                     Jag {% if u.short_statement %}{{ u.short_statement }}{% else %}kan uppleva att {{ u.name|lower }} tar mer energi än det ger{% endif %}
                   </span>
@@ -219,6 +219,95 @@
   {% endif %}
 
 </section>
+
+<!-- B3 RESULTAT -->
+<section class="page page-results">
+
+  <header class="page-header center">
+    <h2 class="page-title-xl">Resultat på B3:s<br>ledarskapsbeteenden</h2>
+    <p class="page-subtitle">
+      Resultaten visas på en femgradig skala (1–5) där varje
+      beteende <br>presenteras
+      tillsammans med tillhörande underbeteenden.
+    </p>
+  </header>
+
+  {% for cluster in b3_clusters %}
+  <article class="result-card">
+
+    <div class="result-card__top">
+
+      <!-- Donut -->
+      <div class="donut-wrap">
+        {% if cluster.total_score != None and cluster.pct_total != None %}
+          <div class="donut" style="--p: {{ cluster.pct_total|floatformat:4 }};">
+            <div class="donut-label">
+              <div class="donut-small">Totalt:</div>
+              <div class="donut-value">{{ cluster.pct_total|floatformat:1 }}%</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="donut donut--empty">
+            <div class="donut-label">
+              <div class="donut-small">Totalt:</div>
+              <div class="donut-value">–</div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Title + description -->
+      <div class="result-main">
+        <h3 class="result-title">{{ cluster.name }}</h3>
+
+        {% if cluster.description %}
+          <p class="result-desc">{{ cluster.description }}</p>
+        {% else %}
+          <p class="result-desc">
+            På B3 innebär detta beteende ett tydligt, enkelt och begripligt språk,
+            både internt och externt.
+          </p>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- Underbehaviors list -->
+    <div class="result-list">
+      {% for u in b3_underbehaviors %}
+        {% if u.cluster == cluster.name %}
+          <div class="result-row">
+            <div class="result-row__name">{{ u.name }}</div>
+
+            <div class="b3-scale b3-scale--small" aria-label="Skala 1 till 5">
+              {% with steps=u.score_5_half_steps %}
+                {% if steps != None %}
+                  {% for i in "12345" %}
+                    {% with step=forloop.counter|add:forloop.counter %}
+                      {% if steps >= step %}
+                        <span class="dot dot--small is-on"></span>
+                      {% elif steps == step|add:"-1" %}
+                        <span class="dot dot--small is-half"></span>
+                      {% else %}
+                        <span class="dot dot--small"></span>
+                      {% endif %}
+                    {% endwith %}
+                  {% endfor %}
+                {% else %}
+                  <span class="no-data">Ingen data</span>
+                {% endif %}
+              {% endwith %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </article>
+  {% endfor %}
+
+</section>
+
 
 
 {% if competencies %}

@@ -491,7 +491,7 @@ def calculate_b3_underbehaviors_and_clusters(
         if items:
             total_score = sum((x["score_5"] * x["weight"]) for x in items if x.get("score_5") is not None)
             max_total = sum((5.0 * x["weight"]) for x in items)  # max per underbeteende är 5
-            pct_total = (total_score / max_total) if (max_total and max_total > 0) else None
+            pct_total = ((total_score / max_total) * 100.0) if (max_total and max_total > 0) else None
 
         items_used = [
             {
@@ -521,6 +521,7 @@ def calculate_b3_underbehaviors_and_clusters(
             "total_score": total_score,   # totalsumma
             "max_total": max_total,       # max totalsumma för klustret
             "pct_total": pct_total,       # 0..1 (bra för donut)
+            "pct_for_donut": pct_total,
 
             # Bakåtkomp om templates fortfarande läser score_5
             "score_5": total_score,
@@ -717,7 +718,7 @@ def upload_view(request):
         # --- Radar chart (huvudbeteenden / total score) ---
         radar_labels = [c["name"] for c in b3_clusters]
         radar_values = [
-            float(c["total_score"]) if c.get("total_score") is not None else 0.0
+            float(c["pct_total"]) if c.get("pct_total") is not None else 0.0
             for c in b3_clusters
         ]
 

@@ -44,7 +44,7 @@ body{
    Layout container
 ---------------------------------------- */
 .container{
-  width: min(880px, calc(100% - 40px));
+  width: min(980px, calc(100% - 40px));
   margin: 40px auto 80px;
 }
 
@@ -158,7 +158,7 @@ h1{
   border-radius: 22px;
   box-shadow: var(--shadow);
   overflow: hidden;
-  padding: 150px 100px 64px; /* luftigt som en sida */
+  padding: 130px 100px 64px; /* luftigt som en sida */
   min-height: 680px;
 }
 
@@ -193,14 +193,13 @@ h1{
 .report-surface h2{
   font-size: 34px;
   line-height: 1.1;
-  margin: 20px 0 30px;
+  margin: 10px 0 30px;
   font-weight: 700;
   letter-spacing: -0.4px;
 }
 
 .report-surface p{
-  font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.5;
   margin: 0 0 14px;
 }
 
@@ -265,6 +264,7 @@ h1{
   letter-spacing: -0.6px;
   font-weight: 800;
   color: #111;
+  margin-top: 50px;
 }
 
 .lead p{
@@ -313,7 +313,6 @@ h1{
   border-radius: 18px;
   overflow: hidden;
   margin-top: 18px;
-  margin-bottom: 130px;
 }
 
 .scale-row{
@@ -332,7 +331,7 @@ h1{
 }
 
 /* dots group */
-.dots{
+.scale-card .dots{
   display: flex;
   gap: 18px;
   align-items: center;
@@ -340,7 +339,7 @@ h1{
 }
 
 /* dot default (hollow) */
-.dot{
+.scale-card .dot{
   width: 18px;
   height: 18px;
   border-radius: 999px;
@@ -350,7 +349,7 @@ h1{
 }
 
 /* dot filled */
-.dot.is-on{
+.scale-card .dot.is-on{
   background: #028081;
   border-color: #C1D5D1;
 }
@@ -408,6 +407,7 @@ h1{
   letter-spacing: -0.6px;
   font-weight: 800;
   color: #111;
+  margin-top: 130px !important;
 }
 
 .page-subtitle{
@@ -449,22 +449,21 @@ h1{
 }
 
 .overview-card{
-  background: rgba(255,255,255,.16);
+  background: rgba(255, 255, 255, 0.253);
   border: 1px solid rgba(0,0,0,.08);
   border-radius: 18px;
-  box-shadow: 0 10px 22px rgba(0,0,0,.06);
   overflow: hidden;
-  padding: 18px 18px 16px;
+  padding: 30px;
 
   display: grid;
   grid-template-columns: 1.05fr .95fr;
-  gap: 16px;
+  gap: 30px;
   align-items: start;
 }
 
 /* top/left text area */
 .overview-card__title{
-  margin: 10px 0 10px;
+  margin: 20px 0 10px;
   font-size: 20px;
   line-height: 1.15;
   font-weight: 800;
@@ -475,17 +474,17 @@ h1{
 
 .overview-card__desc{
   margin: 0;
-  font-size: 12px;
-  line-height: 1.65;
-  color: rgba(0,0,0,.62);
+  font-size: 13px;
+  color: rgb(0, 0, 0);
   max-width: 55ch;
+  line-height: 1.15;
 }
 
 /* mini black label like screenshot */
 .mini-label{
   display: inline-block;
   color: #000000;
-  font-size: 14px;
+  font-size: 15px;
   text-transform: uppercase;
 
   font-family: "B3Label", "Work Sans", sans-serif;
@@ -504,11 +503,10 @@ h1{
 }
 
 .pill{
-  background: rgba(255,255,255,.20);
+  background: rgb(255, 255, 255);
   border: 1px solid rgba(0,0,0,.08);
   border-radius: 12px;
   padding: 10px 12px;
-  box-shadow: 0 6px 14px rgba(0,0,0,.05);
 }
 
 .pill--muted{
@@ -517,15 +515,201 @@ h1{
 
 .pill__text{
   display: block;
-  font-size: 11px;
-  line-height: 1.55;
-  color: rgba(0,0,0,.70);
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgb(0, 0, 0);
 }
 
 .pill strong{
   font-weight: 800;
   color: rgba(0,0,0,.88);
 }
+
+/* ---------------------------------------
+   Results page (donut + underbehavior rows)
+---------------------------------------- */
+
+.page-results{
+  max-width: 920px;
+}
+
+/* Card container */
+.result-card{
+  background: rgba(255, 255, 255, 0.315);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 30px;
+  margin: 40px 0;
+}
+
+/* Top grid: donut + text */
+.result-card__top{
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+
+.result-title{
+  margin: 0 0 6px;
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: #111;
+  max-width: 34ch;
+}
+
+.result-desc{
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgb(0, 0, 0);
+  max-width: 70ch;
+}
+
+/* Underbehavior list */
+.result-list{
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+/* Each row */
+.result-row{
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 14px;
+  align-items: center;
+
+  background: rgb(255, 255, 255);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 10px;
+  padding: 15px 12px;
+}
+
+.result-row__name{
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgb(0, 0, 0);
+}
+
+/* ---------------------------------------
+   Dots scale (small)
+---------------------------------------- */
+
+.b3-scale--small{
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.b3-scale--small .dot{
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: transparent;
+  border: 3px solid #C1D5D1;
+}
+
+.b3-scale--small .dot--small{
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+}
+
+.b3-scale--small .dot.is-on{
+  background: #028081;
+}
+
+/* Half filled dot (left half teal, right half hollow) */
+.dot.is-half{
+  background:
+    linear-gradient(90deg, #028081 50%, transparent 50%);
+}
+
+/* ---------------------------------------
+   Donut (pure CSS)
+   --p expects percentage 0..100
+---------------------------------------- */
+
+.donut-wrap{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.donut{
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  position: relative;
+
+  background:
+    conic-gradient(#028081 calc(var(--p) * 1%), rgba(0,0,0,.10) 0);
+}
+
+.donut::after{
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 999px;
+  background: var(--report-bg);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+}
+
+.donut-label{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-small{
+  font-size: 10px;
+  letter-spacing: .02em;
+  color: rgb(0, 0, 0);
+  margin-bottom: 2px;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.donut-value{
+  font-size: 13px;
+  font-weight: 800;
+  color: rgb(0, 0, 0);
+  margin-top: -50px;
+}
+
+/* empty state */
+.donut--empty{
+  background: rgba(0,0,0,.08);
+}
+
+/* ---------------------------------------
+   Responsive
+---------------------------------------- */
+@media (max-width: 760px){
+  .result-card__top{
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .result-title{ max-width: unset; }
+  .result-row{
+    grid-template-columns: 1fr;
+  }
+  .b3-scale--small{
+    justify-content: flex-start;
+  }
+}
+
 
 /* Responsive */
 @media (max-width: 860px){
