@@ -1,3 +1,4 @@
+{% load report_extras %}
 <!-- Zebra header (upprepas på varje sida i PDF) -->
 <div class="zebra-header" aria-hidden="true"></div>
 
@@ -307,4 +308,103 @@
   {% endfor %}
 
 </section>
+
+<section class="page page-mapping">
+
+  <header class="page-header center">
+    <div class="section-label">VISUELL MAPPNING</div>
+    <h2 class="page-title-xl no-margin">B3-beteenden <br>→ TQ-kompetenser</h2>
+    <p class="page-subtitle">
+      Här visas hur varje B3-underbeteende är kopplat<br>till TQ-kompetenser enligt mappningen.
+    </p>
+  </header>
+
+  {% for cluster in b3_clusters %}
+    <article class="mapping-card">
+
+      <div class="mapping-card__header">
+        <h3 class="mapping-card__title">{{ cluster.name }}</h3>
+      </div>
+
+      <div class="mapping-card__body">
+
+        {% for u in b3_underbehaviors %}
+          {% if u.cluster == cluster.name %}
+
+            <div class="ub-block">
+
+              <!-- Underbehavior row -->
+              <div class="ub-row">
+                <div class="ub-name">{{ u.name }}</div>
+
+                <div class="ub-right">
+                  <div class="ub-small-label">Ditt resultat</div>
+
+                  <div class="b3-scale b3-scale--small" aria-label="Skala 1 till 5">
+                    {% with steps=u.score_5_half_steps %}
+                      {% if steps != None %}
+                        {% for i in "12345" %}
+                          {% with step=forloop.counter|add:forloop.counter %}
+                            {% if steps >= step %}
+                              <span class="dot dot--small is-on"></span>
+                            {% elif steps == step|add:"-1" %}
+                              <span class="dot dot--small is-half"></span>
+                            {% else %}
+                              <span class="dot dot--small"></span>
+                            {% endif %}
+                          {% endwith %}
+                        {% endfor %}
+                      {% else %}
+                        <span class="no-data">Ingen data</span>
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Expand area with competencies -->
+              <div class="ub-expand">
+
+                <div class="ub-expand__title">Bakomliggande TQ-kompetenser</div>
+                <div class="ub-expand__subtitle">Kompetenserna nedan bidrar till resultatet ovan</div>
+
+                <div class="comp-list">
+                    {% for comp in u.mapped_competencies %}
+                      {% with score=comp.score %}
+                      <div class="comp-item">
+                        <div class="comp-left">
+                          <div class="comp-name">{{ comp.name }}</div>
+                          <div class="comp-desc">
+                            Ger tydlig riktning och stöd i arbetssätt som skapar framdrift och trygghet.
+                          </div>
+                        </div>
+
+                        <div class="comp-right">
+                          <div class="comp-bar" style="--v:{% if score != None %}{{ score }}{% else %}0{% endif %};">
+                            <span class="comp-fill"></span>
+                          </div>
+
+                          <div class="comp-meta">
+                            <div class="comp-ticks">
+                              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endwith %}
+                  {% endfor %}
+                </div>
+
+              </div>
+            </div>
+
+          {% endif %}
+        {% endfor %}
+
+      </div>
+    </article>
+  {% endfor %}
+
+</section>
+
 

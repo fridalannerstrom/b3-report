@@ -382,13 +382,22 @@ def _build_under_calc_line(comp_debug: List[Dict[str, Any]], result: Optional[fl
 def calculate_b3_underbehaviors_and_clusters(
     competency_values: Dict[str, float],
     b3_underbehaviors_def: List[Dict[str, Any]],
-) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], str, List[Dict[str, Any]], List[Dict[str, Any]]]:
+) -> Tuple[
+    List[Dict[str, Any]],  # underbehaviors
+    List[Dict[str, Any]],  # clusters
+    str,                   # calc_explain_text
+    List[Dict[str, Any]],  # under_compare_rows
+    List[Dict[str, Any]],  # cluster_compare_rows
+    Dict[str, Any],        # insights
+]:
     """
-    NY LOGIK (enligt nya rapport-idén):
-    - Underbeteende (1–5): enkelt medelvärde av kompetenser (ingen kompetensviktning).
-    - Huvudbeteende (kluster): TOTAL SCORE = Σ(under_score × under_weight)
-      där under_weight är 1 eller 2.
-    - Extra: max_total + pct_total för UI (donut/spindel) utan template-matte.
+    LOGIK:
+    - Underbeteende (1–5): vanligt medel av kopplade kompetenser (ingen kompetensviktning).
+    - Huvudbeteende/kluster: total_score = Σ(under_score × under_weight), weight 1 eller 2.
+    - UI:
+        pct_total        = ratio 0..1  (perfekt för donut)
+        pct_total_percent= 0..100      (perfekt för text/radar om du vill)
+    - mapped_competencies: [{name, score}] för UI-kompetensraderna (bar-grafen).
     """
 
     lookup = _build_lookup(competency_values)
@@ -396,32 +405,45 @@ def calculate_b3_underbehaviors_and_clusters(
     underbehaviors: List[Dict[str, Any]] = []
     cluster_items: Dict[str, List[Dict[str, Any]]] = {}
 
-    # --- Klusterordning ---
+    # Klusterordning (behåller den ordning du definierat i B3_UNDERBEHAVIORS)
     cluster_order: List[str] = []
     for beh in b3_underbehaviors_def:
-        if beh.get("cluster") not in cluster_order:
-            cluster_order.append(beh.get("cluster"))
+        c = beh.get("cluster")
+        if c and c not in cluster_order:
+            cluster_order.append(c)
 
-    # --- 1) Underbeteenden: INGEN kompetensviktning ---
+    # 1) Underbeteenden
     for beh in b3_underbehaviors_def:
         comp_debug: List[Dict[str, Any]] = []
         comp_values: List[float] = []
         missing: List[str] = []
 
-        for comp in beh.get("competencies", []):
+        comps = beh.get("competencies", [])
+
+        # Hämta scores för beräkningen (med din alias-matchning)
+        for comp in comps:
             v = _find_score(lookup, comp)
             if v is None:
                 missing.append(comp)
                 continue
-
             v = float(v)
             comp_values.append(v)
 
             comp_debug.append({
                 "competency": comp,
                 "score": v,
-                "weight": 1.0,   # alltid 1
-                "weighted": v,   # samma som score
+                "weight": 1.0,
+                "weighted": v,
+            })
+
+        # ✅ Detta är NYCKELN: bygg en lista som UI kan loopa över
+        # Den innehåller ALLA kompetenser (även de som saknar score => None)
+        mapped_competencies: List[Dict[str, Any]] = []
+        for comp in comps:
+            v = _find_score(lookup, comp)
+            mapped_competencies.append({
+                "name": comp,
+                "score": float(v) if v is not None else None,
             })
 
         under_score = _simple_average(comp_values)
@@ -430,12 +452,9 @@ def calculate_b3_underbehaviors_and_clusters(
         under_half_steps = int(under_half * 2) if under_half is not None else None
         under_rounded = int(round(under_score)) if under_score is not None else None
 
-        # Vikt per underbeteende (1 eller 2). Default = 1.
-        # Om du råkar ha 5 i mapping just nu: här klampar vi ner det till 2 för safety.
         raw_weight = float(beh.get("weight", 1.0))
         under_weight = 2.0 if raw_weight >= 2.0 else 1.0
 
-        # Uträkningstext
         if comp_debug and under_score is not None:
             left = " + ".join([f'{c["competency"]} {_fmt(c["score"])}' for c in comp_debug])
             n = len(comp_debug)
@@ -446,22 +465,20 @@ def calculate_b3_underbehaviors_and_clusters(
         item = {
             "cluster": beh.get("cluster"),
             "name": beh.get("name"),
-            "competencies": beh.get("competencies", []),
+            "competencies": comps,
 
-            # Underbeteende (1–5)
+            # ✅ här finns det du vill använda i template för bar-grafen
+            "mapped_competencies": mapped_competencies,
+
             "score_5": under_score,
             "score_5_half": under_half,
             "score_5_half_steps": under_half_steps,
             "score_5_rounded": under_rounded,
 
-            # För transparens (samma nu)
-            "score_5_weighted": under_score,
-            "score_5_unweighted": under_score,
-
-            # Vikt används endast när vi summerar TOTAL SCORE på huvudbeteende
             "weight": under_weight,
             "missing": missing,
 
+            # debug kan du ta bort sen, men behåller så länge
             "calc_debug": {
                 "formula": "(Σ(score)) / N (antal kompetenser)",
                 "components": comp_debug,
@@ -477,21 +494,24 @@ def calculate_b3_underbehaviors_and_clusters(
         underbehaviors.append(item)
         cluster_items.setdefault(item["cluster"], []).append(item)
 
-    # --- 2) Kluster (huvudbeteenden): TOTAL SCORE ---
+    # 2) Kluster (huvudbeteenden)
     clusters: List[Dict[str, Any]] = []
 
     for cluster_name in cluster_order:
         items = [x for x in cluster_items.get(cluster_name, []) if x.get("score_5") is not None]
 
-        # Total score: Σ(under_score × under_weight)
         total_score: Optional[float] = None
         max_total: Optional[float] = None
-        pct_total: Optional[float] = None
+        pct_ratio: Optional[float] = None       # 0..1
+        pct_percent: Optional[float] = None     # 0..100
 
         if items:
             total_score = sum((x["score_5"] * x["weight"]) for x in items if x.get("score_5") is not None)
-            max_total = sum((5.0 * x["weight"]) for x in items)  # max per underbeteende är 5
-            pct_total = ((total_score / max_total) * 100.0) if (max_total and max_total > 0) else None
+            max_total = sum((5.0 * x["weight"]) for x in items)
+
+            if max_total and max_total > 0:
+                pct_ratio = total_score / max_total
+                pct_percent = pct_ratio * 100.0
 
         items_used = [
             {
@@ -504,12 +524,8 @@ def calculate_b3_underbehaviors_and_clusters(
             if x.get("score_5") is not None
         ]
 
-        # "Visa uträkning" text
         if total_score is not None and items_used:
-            left = " + ".join([
-                f'{x["underbehavior"]} {_fmt(x["score"])}×{_fmt(x["weight"],0)}'
-                for x in items_used
-            ])
+            left = " + ".join([f'{x["underbehavior"]} {_fmt(x["score"])}×{_fmt(x["weight"],0)}' for x in items_used])
             human_cluster_line = f"{left} = {_fmt(total_score)}"
         else:
             human_cluster_line = "Ingen uträkning (saknar underbeteenden)."
@@ -517,20 +533,22 @@ def calculate_b3_underbehaviors_and_clusters(
         clusters.append({
             "name": cluster_name,
 
-            # ✅ Nycklar för UI
-            "total_score": total_score,   # totalsumma
-            "max_total": max_total,       # max totalsumma för klustret
-            "pct_total": pct_total,       # 0..1 (bra för donut)
-            "pct_for_donut": pct_total,
+            "total_score": total_score,
+            "max_total": max_total,
 
-            # Bakåtkomp om templates fortfarande läser score_5
+            # ✅ för UI
+            "pct_total": pct_percent,                 # 0..100
+            "pct_total_ratio": pct_ratio,             # 0..1 (om du vill ha kvar)
+
+            # bakåtkomp
             "score_5": total_score,
 
             "calc_debug": {
                 "formula": "Σ(under_score × under_vikt)",
                 "result": total_score,
                 "max_total": max_total,
-                "pct_total": pct_total,
+                "pct_total": pct_percent,
+                "pct_total_ratio": pct_ratio,
                 "items_used": items_used,
             },
             "calc_human": {
@@ -546,48 +564,22 @@ def calculate_b3_underbehaviors_and_clusters(
         "- Huvudbeteenden beräknas som totalpoäng: Σ(underbeteende-poäng × underbeteende-vikt), där vikt är 1 eller 2."
     )
 
-    # Jämförelse-tabeller (kan vara kvar, men diff blir alltid 0 nu)
     under_compare_rows = [
-        {
-            "cluster": u["cluster"],
-            "name": u["name"],
-            "weighted": u.get("score_5"),
-            "unweighted": u.get("score_5"),
-            "diff": 0.0
-        }
-        for u in underbehaviors
-        if u.get("score_5") is not None
+        {"cluster": u["cluster"], "name": u["name"], "weighted": u.get("score_5"), "unweighted": u.get("score_5"), "diff": 0.0}
+        for u in underbehaviors if u.get("score_5") is not None
     ]
     cluster_compare_rows = [
-        {
-            "name": c["name"],
-            "weighted": c.get("total_score"),
-            "unweighted": None,
-            "diff": None
-        }
+        {"name": c["name"], "weighted": c.get("total_score"), "unweighted": None, "diff": None}
         for c in clusters
     ]
 
-    # --- 3) Topp & botten (huvudbeteenden) ---
     clusters_with_score = [c for c in clusters if c.get("total_score") is not None]
-
     most_natural = max(clusters_with_score, key=lambda c: c["total_score"]) if clusters_with_score else None
     needs_development = min(clusters_with_score, key=lambda c: c["total_score"]) if clusters_with_score else None
 
-    # --- 4) Energi-insikter (Top 3 / Bottom 3 underbeteenden) ---
-
     valid_under = [u for u in underbehaviors if u.get("score_5") is not None]
-
-    top_3_energy = sorted(
-        valid_under,
-        key=lambda u: u["score_5"],
-        reverse=True
-    )[:3]
-
-    bottom_3_energy = sorted(
-        valid_under,
-        key=lambda u: u["score_5"]
-    )[:3]
+    top_3_energy = sorted(valid_under, key=lambda u: u["score_5"], reverse=True)[:3]
+    bottom_3_energy = sorted(valid_under, key=lambda u: u["score_5"])[:3]
 
     insights = {
         "most_natural": most_natural,
@@ -597,6 +589,7 @@ def calculate_b3_underbehaviors_and_clusters(
     }
 
     return underbehaviors, clusters, calc_explain_text, under_compare_rows, cluster_compare_rows, insights
+
 
 
 
@@ -666,17 +659,22 @@ def upload_view(request):
         full_name = f"{first_name} {last_name}".strip() or "Kandidaten"
 
         competency_values = _extract_competency_values(df)
+
+        # (valfritt att ha kvar) enkel lookup om du vill, men du behöver inte för underbeteenden nu
+        def _norm_key(s: str) -> str:
+            return (s or "").strip().lower().replace("&", "and")
+
+        competency_lookup = {_norm_key(k): float(v) for k, v in competency_values.items()}
+
         labels = list(competency_values.keys())
         values = list(competency_values.values())
         avg_score = (sum(values) / len(values)) if values else None
 
-        competencies_list = []
-        for k, v in competency_values.items():
-            competencies_list.append({
-                "name": k,
-                "score_5": float(v),
-                "score_5_rounded": int(round(float(v))),  # ✅ för pluppar
-            })
+        competencies_list = [{
+            "name": k,
+            "score_5": float(v),
+            "score_5_rounded": int(round(float(v))),
+        } for k, v in competency_values.items()]
 
         if avg_score is not None:
             if avg_score >= 3.5:
@@ -704,18 +702,24 @@ def upload_view(request):
             "full_name": full_name,
             "avg_score": avg_score,
             "summary_text": summary_text,
-            "competencies": competencies_list, 
+
+            "competencies": competencies_list,
             "chart_labels": labels,
             "chart_values": values,
+
+            "competency_lookup": competency_lookup,  # om du vill använda senare
+
             "b3_underbehaviors": b3_underbehaviors,
             "b3_clusters": b3_clusters,
             "insights": insights,
+
             "calc_explain_text": calc_explain_text,
             "under_compare_rows": under_compare_rows,
             "cluster_compare_rows": cluster_compare_rows,
         }
 
-        # --- Radar chart (huvudbeteenden / total score) ---
+        # Radar chart:
+        # Om du vill ha 0..100 i radar:
         radar_labels = [c["name"] for c in b3_clusters]
         radar_values = [
             float(c["pct_total"]) if c.get("pct_total") is not None else 0.0
@@ -727,14 +731,11 @@ def upload_view(request):
             "radar_values": radar_values,
         })
 
-
-        print("B3 DEBUG missing count:", sum(len(x["missing"]) for x in b3_underbehaviors))
-        print("Example missing:", [x for x in b3_underbehaviors if x["missing"]][:2])
-
         request.session["report_data"] = report_data
         context.update(report_data)
 
     return render(request, "reports/upload.html", context)
+
 
 
 def report_pdf_page(request):
