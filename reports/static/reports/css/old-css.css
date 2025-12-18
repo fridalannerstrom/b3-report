@@ -668,7 +668,6 @@ body {
   left: 0;
   right: 0;
   height: 18mm;
-  background-image: url("/static/img/zebra-top.png"); /* byt till din */
   background-repeat: repeat-x;
   background-size: auto 100%;
   z-index: 1000;
