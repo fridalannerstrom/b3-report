@@ -152,7 +152,7 @@ B3_UNDERBEHAVIORS = [
     },
 
     # ─────────────────────────────────────────
-    # Driva mot måldrivna och ambitiösa mål
+    # Driva mot ambitiösa och mätbara resultatmål
     # ─────────────────────────────────────────
     {
         "cluster": "Driva mot måldrivna och ambitiösa mål",
