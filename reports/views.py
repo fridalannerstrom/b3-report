@@ -2,6 +2,7 @@ import asyncio
 import re
 from typing import Dict, Any, List, Optional, Tuple
 from urllib.parse import urlparse
+import math
 
 import pandas as pd
 from django.conf import settings
@@ -504,6 +505,7 @@ def calculate_b3_underbehaviors_and_clusters(
         max_total: Optional[float] = None
         pct_ratio: Optional[float] = None       # 0..1
         pct_percent: Optional[float] = None     # 0..100
+        pct_percent_text: int = 0
 
         if items:
             total_score = sum((x["score_5"] * x["weight"]) for x in items if x.get("score_5") is not None)
@@ -512,6 +514,7 @@ def calculate_b3_underbehaviors_and_clusters(
             if max_total and max_total > 0:
                 pct_ratio = total_score / max_total
                 pct_percent = pct_ratio * 100.0
+                pct_percent_text = min(100, int(math.ceil(pct_percent)))
 
         items_used = [
             {
@@ -539,6 +542,7 @@ def calculate_b3_underbehaviors_and_clusters(
             # ✅ för UI
             "pct_total": pct_percent,                 # 0..100
             "pct_total_ratio": pct_ratio,             # 0..1 (om du vill ha kvar)
+            "pct_total_text": pct_percent_text,
 
             # bakåtkomp
             "score_5": total_score,
@@ -547,8 +551,12 @@ def calculate_b3_underbehaviors_and_clusters(
                 "formula": "Σ(under_score × under_vikt)",
                 "result": total_score,
                 "max_total": max_total,
-                "pct_total": pct_percent,
+                # ✅ rå (för donut/diagram om du vill ha mjukare)
+                "pct_total_raw": pct_percent,          # float 0..100
+                # ✅ visningsvärde: heltal, alltid uppåt
+                "pct_total": pct_percent, 
                 "pct_total_ratio": pct_ratio,
+                "pct_total_text": pct_percent_text,  
                 "items_used": items_used,
             },
             "calc_human": {

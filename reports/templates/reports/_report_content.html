@@ -145,7 +145,7 @@
       <!-- Card 1: Mest naturligt -->
       <article class="overview-card">
         <div class="overview-card__top">
-          <div class="mini-label">DITT MEST NATURLIGA BETEENDE</div>
+          <p class="overview-card__desc"><strong>Ditt mest naturliga beteende</strong></p>
           <h3 class="overview-card__title">{{ insights.most_natural.name }}</h3>
           {% if insights.most_natural.description %}
             <p class="overview-card__desc">{{ insights.most_natural.description }}</p>
@@ -157,7 +157,7 @@
         </div>
 
         <div class="overview-card__bottom">
-          <div class="mini-label">DET SOM GER DIG ENERGI</div>
+           <p class="overview-card__desc"><strong>Det som ger dig energi</strong></p>
 
           {% if insights.top_energy %}
             <div class="pill-list">
@@ -182,7 +182,7 @@
       <!-- Card 2: Behöver utvecklas -->
       <article class="overview-card">
         <div class="overview-card__top">
-          <div class="mini-label">BETEENDE DU BEHÖVER UTVECKLA</div>
+          <p class="overview-card__desc"><strong>Beteende du behöver utveckla</strong></p>
           <h3 class="overview-card__title">{{ insights.needs_development.name }}</h3>
           {% if insights.needs_development.description %}
             <p class="overview-card__desc">{{ insights.needs_development.description }}</p>
@@ -194,7 +194,7 @@
         </div>
 
         <div class="overview-card__bottom">
-          <div class="mini-label">DET SOM TAR ENERGI FRÅN DIG</div>
+          <p class="overview-card__desc"><strong>Det som tar energi från dig</strong></p>
 
           {% if insights.low_energy %}
             <div class="pill-list">
@@ -244,7 +244,7 @@
           <div class="donut" style="--p: {{ cluster.pct_total|floatformat:4 }};">
             <div class="donut-label">
               <div class="donut-small">Totalt:</div>
-              <div class="donut-value">{{ cluster.pct_total|floatformat:1 }}%</div>
+              <div class="donut-value">{{ cluster.pct_total_text }}%</div>
             </div>
           </div>
         {% else %}
