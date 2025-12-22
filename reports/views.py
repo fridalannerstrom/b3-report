@@ -600,32 +600,39 @@ async def _render_pdf_async(url: str, cookie_name: str, cookie_value: Optional[s
             headless=True,
             args=["--no-sandbox", "--disable-setuid-sandbox"] if not settings.DEBUG else []
         )
-        context = await browser.new_context()
+
+        # ✅ Sätt desktop-viewport direkt på context (viktigare än på page)
+        context = await browser.new_context(
+            viewport={"width": 1440, "height": 900},
+            device_scale_factor=1,   # undvik konstiga skalningar
+        )
 
         if cookie_value:
             parsed = urlparse(url)
             await context.add_cookies([{
                 "name": cookie_name,
                 "value": cookie_value,
-                "domain": parsed.hostname,  # ex: 127.0.0.1
+                "domain": parsed.hostname,
                 "path": "/",
             }])
 
         page = await context.new_page()
-        await page.goto(url, wait_until="domcontentloaded")
 
-        # Liten buffert så att ev. chart hinner ritas
-        await page.wait_for_timeout(300)
-        await page.set_viewport_size({"width": 1440, "height": 900})
-        await page.emulate_media(media="screen")  # superviktigt: använd screen istället för print
+        # ✅ Superviktigt: gör detta innan goto
+        await page.emulate_media(media="screen")
 
+        # ✅ Ladda sidan EN gång, i rätt viewport + screen
         await page.goto(url, wait_until="networkidle")
+
+        # (valfritt) om charts behöver lite tid
+        await page.wait_for_timeout(300)
 
         pdf_bytes = await page.pdf(
             format="A4",
             print_background=True,
             margin={"top": "0", "right": "0", "bottom": "0", "left": "0"},
             prefer_css_page_size=True,
+            scale=1,  # ✅ stoppa auto-krympning
         )
 
         await browser.close()

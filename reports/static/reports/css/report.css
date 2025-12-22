@@ -884,6 +884,64 @@ html, body {
   padding: 100px;
 }
 
+/* =========================
+   PDF: FORCE DESKTOP LAYOUT
+   ========================= */
+
+/* A4 + inga marginaler */
+@page { size: A4; margin: 0; }
+
+body.pdf {
+  /* viktigt: låt inte print trycka ihop layout */
+  min-width: 980px; /* matchar din container-bredd */
+}
+
+/* Om du har container som annars krymper */
+body.pdf .container{
+  width: 980px !important;
+  margin: 0 auto !important;
+}
+
+/* Tvinga report-surface till desktop padding och typografi */
+body.pdf .report-surface{
+  padding: 130px 100px 64px !important;
+}
+
+body.pdf .report-surface h2{
+  font-size: 34px !important;
+}
+
+/* Neutralisera responsiva regler som ändrar grids */
+body.pdf .overview-card{
+  grid-template-columns: 1.05fr .95fr !important;
+}
+
+body.pdf .result-card__top{
+  grid-template-columns: 120px 1fr !important;
+  text-align: left !important;
+  justify-items: start !important;
+}
+
+body.pdf .result-row{
+  grid-template-columns: 1fr 160px !important;
+}
+
+body.pdf .scale-row{
+  grid-template-columns: 210px 1fr !important;
+}
+
+/* Mapping layout */
+body.pdf .ub-row{
+  grid-template-columns: 1fr 180px !important;
+}
+body.pdf .comp-item{
+  grid-template-columns: 1.2fr 1fr !important;
+}
+body.pdf .comp-right{
+  justify-self: end !important;
+  width: min(230px, 100%) !important;
+}
+
 /* Responsive */
 @media (max-width: 760px){
   .ub-row{
