@@ -862,6 +862,28 @@ h1{
   color: rgba(0,0,0,.50);
 }
 
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #efe7df; /* din beige */
+}
+
+/* Om du har en wrapper som sätter max-width + centrerar */
+.report-wrapper, .report-container {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+* {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.report-page {
+  padding: 100px;
+}
+
 /* Responsive */
 @media (max-width: 760px){
   .ub-row{
@@ -940,3 +962,4 @@ h1{
     height: 38px;
   }
 }
+

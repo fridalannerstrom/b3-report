@@ -616,11 +616,16 @@ async def _render_pdf_async(url: str, cookie_name: str, cookie_value: Optional[s
 
         # Liten buffert så att ev. chart hinner ritas
         await page.wait_for_timeout(300)
+        await page.set_viewport_size({"width": 1440, "height": 900})
+        await page.emulate_media(media="screen")  # superviktigt: använd screen istället för print
+
+        await page.goto(url, wait_until="networkidle")
 
         pdf_bytes = await page.pdf(
             format="A4",
             print_background=True,
-            margin={"top": "14mm", "right": "12mm", "bottom": "14mm", "left": "12mm"},
+            margin={"top": "0", "right": "0", "bottom": "0", "left": "0"},
+            prefer_css_page_size=True,
         )
 
         await browser.close()
