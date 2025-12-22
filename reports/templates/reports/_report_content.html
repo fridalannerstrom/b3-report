@@ -163,7 +163,7 @@
               {% for u in insights.top_energy %}
                 <div class="pill">
                   <span class="pill__text">
-                    Jag {% if u.short_statement %}{{ u.short_statement }}{% else %}upplever att {{ u.name|lower }} ofta stärker mitt driv{% endif %}
+                    {{ u.name }}
                   </span>
                 </div>
               {% endfor %}
@@ -200,7 +200,7 @@
               {% for u in insights.low_energy %}
                 <div class="pill">
                   <span class="pill__text">
-                    Jag {% if u.short_statement %}{{ u.short_statement }}{% else %}kan uppleva att {{ u.name|lower }} tar mer energi än det ger{% endif %}
+                    {{ u.name }}
                   </span>
                 </div>
               {% endfor %}
