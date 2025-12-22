@@ -346,6 +346,62 @@ COMPETENCY_UI = {
     },
 }
 
+B3_CLUSTER_DEFS = {
+    "Affärs- och värderingsdrivet ledarskap": {
+        "title": "Affärs- och värderingsdrivet ledarskap",
+        "description": (
+            "På B3 innebär det att vi leder med både hjärta och fokus på att skapa kundvärde "
+            "och lönsamhet, samtidigt som vi bygger en kultur där våra värderingar styr hur "
+            "vi agerar i relation till kunder, kollegor och affären. Det handlar om att ta "
+            "ansvar för helheten, att vara tydlig med mål och riktning, och att alltid balansera "
+            "affärsmässighet med omtanke.\n\n"
+            "Det betyder också att vi vågar visa mod, fatta beslut och stå upp för våra "
+            "värderingar, även när det är tufft. Genom att skapa trygghet för våra kunder och "
+            "kollegor, oavsett situation, bygger vi förtroende och långsiktighet."
+        ),
+    },
+
+    "Kommunicera precist och tydligt": {
+        "title": "Kommunicera precist och tydligt",
+        "description": (
+            "På B3 innebär det att vi använder ett klart, enkelt och begripligt språk, både "
+            "internt och externt. Vi tar initiativ till dialog även i svåra situationer, lyfter "
+            "det som fungerar för att förstärka vår goda kultur och står bakom gemensamma "
+            "beslut. Kommunikation är nyckeln till tillit, samarbete och gemensam riktning."
+        ),
+    },
+
+    "Bygg och främja en prestationsdriven kultur": {
+        "title": "Bygg och främja en prestationsdriven kultur",
+        "description": (
+            "På B3 innebär det att vi sätter höga förväntningar, uppmuntrar ansvarstagande och "
+            "ger utrymme för initiativ. Vi bygger team utifrån både kompetens och kulturmatch, "
+            "främjar transparens i beslut och skapar en trygg miljö där olika perspektiv får "
+            "utrymme."
+        ),
+    },
+
+    "Driva mot måldrivna och ambitiösa mål": {
+        "title": "Driva mot ambitiösa och mätbara resultatmål",
+        "description": (
+            "På B3 innebär det att vi sätter tydliga mål, skapar engagemang kring dem och "
+            "arbetar systematiskt för att nå dem. Vi följer upp regelbundet, justerar vid "
+            "behov och samarbetar över gränser för att säkerställa leverans och lönsamhet."
+        ),
+    },
+
+    "Rekrytera, utveckla och behåll rätt förmågor och personer": {
+        "title": "Rekrytera, utveckla och behålla rätt förmågor och personer",
+        "description": (
+            "På B3 innebär det att vi är noga med att rekrytera rätt kompetens, värdera "
+            "kulturmatch och vilja till utveckling. Vi sätter tydliga förväntningar, bygger "
+            "en lärandekultur och skapar en inkluderande arbetsmiljö där människor kan växa "
+            "och bidra."
+        ),
+    },
+}
+
+
 
 # ─────────────────────────────────────────
 # Helpers
@@ -538,7 +594,7 @@ def calculate_b3_underbehaviors_and_clusters(
             v = _find_score(lookup, comp)
 
             ui = COMPETENCY_UI.get(comp, {})  # <-- VIKTIGT: definiera ui här
-            
+
             mapped_competencies.append({
                 "name": comp,
                 "label": ui.get("sv", comp),          # svenska för UI
@@ -598,6 +654,9 @@ def calculate_b3_underbehaviors_and_clusters(
     clusters: List[Dict[str, Any]] = []
 
     for cluster_name in cluster_order:
+        cluster_ui = B3_CLUSTER_DEFS.get(cluster_name, {})
+        cluster_title = cluster_ui.get("title", cluster_name)
+        cluster_desc = cluster_ui.get("description", "")
         items = [x for x in cluster_items.get(cluster_name, []) if x.get("score_5") is not None]
 
         total_score: Optional[float] = None
@@ -634,6 +693,8 @@ def calculate_b3_underbehaviors_and_clusters(
 
         clusters.append({
             "name": cluster_name,
+            "title": cluster_title,
+            "description": cluster_desc,
 
             "total_score": total_score,
             "max_total": max_total,
