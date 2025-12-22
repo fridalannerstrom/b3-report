@@ -384,10 +384,10 @@ Som appendix finns därför en visuell översikt som visar vilka TQ-kompetenser 
                       {% with score=comp.score %}
                       <div class="comp-item">
                         <div class="comp-left">
-                          <div class="comp-name">{{ comp.name }}</div>
-                          <div class="comp-desc">
-                            Ger tydlig riktning och stöd i arbetssätt som skapar framdrift och trygghet.
-                          </div>
+                          <div class="comp-name">{{ comp.label }}</div>
+                            <div class="comp-desc">
+                              {{ comp.description }}
+                            </div>
                         </div>
 
                         <div class="comp-right">

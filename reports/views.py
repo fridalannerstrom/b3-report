@@ -251,6 +251,100 @@ COMP_ALIASES = {
     "results orientation": ["results orientation", "result orientation"],
 }
 
+COMPETENCY_UI = {
+    "Developing relationships": {
+        "sv": "Utveckla relationer",
+        "desc": "Utvecklar och upprätthåller positiva relationer, relaterar väl till ett brett spektrum av människor.",
+    },
+    "Results orientation": {
+        "sv": "Resultatorientering",
+        "desc": "Strävar efter att uppnå resultat och överträffa förväntningar med ihärdighet och beslutsamhet.",
+    },
+    "Adaptability": {
+        "sv": "Anpassningsförmåga",
+        "desc": "Anpassar sitt arbetssätt effektivt till förändrade situationer, människor och möjligheter.",
+    },
+    "Reliability": {
+        "sv": "Pålitlighet",
+        "desc": "Uppvisar fokus på att leverera det som krävs, i rätt tid och med hög kvalitet.",
+    },
+    "Written communication": {
+        "sv": "Skriftlig kommunikation",
+        "desc": "Skriver tydligt och koncist på ett sätt som säkerställer att budskapet fungerar för målgruppen.",
+    },
+    "Engaging others": {
+        "sv": "Engagera andra",
+        "desc": "Visar entusiasm och passion för att inspirera och engagera andra.",
+    },
+    "Delegating": {
+        "sv": "Delegera",
+        "desc": "Delegerar arbete på ett lämpligt sätt med hänsyn till kompetens, erfarenhet och tillgänglighet.",
+    },
+    "Customer focus": {
+        "sv": "Kundfokus",
+        "desc": "Försöker förstå kundernas behov och arbetar hårt för att de ska tillgodoses.",
+    },
+    "Resilience": {
+        "sv": "Uthållighet",
+        "desc": "Fungerar bra under press och kommer snabbt igen efter motgångar.",
+    },
+    "Supporting others": {
+        "sv": "Stödja andra",
+        "desc": "Stödjer andra i utmaningar och hjälper dem som har svårt att klara sig själva.",
+    },
+    "Managing conflicts": {
+        "sv": "Hantera konflikter",
+        "desc": "Hanterar och löser konflikter och meningsskiljaktigheter taktfullt men ändå bestämt.",
+    },
+    "Interpersonal communication": {
+        "sv": "Personlig kommunikation",
+        "desc": "Kommunicerar effektivt och engagerande på ett professionellt sätt.",
+    },
+    "Organisational awareness": {
+        "sv": "Organisatorisk medvetenhet",
+        "desc": "Förstår hur verksamheten fungerar och bedömer påverkan på sig själv, team och organisation.",
+    },
+    "Dealing with ambiguity": {
+        "sv": "Hantera otydlighet",
+        "desc": "Svarar bra på otydliga situationer och förblir effektiv vid osäkerhet.",
+    },
+    "Networking": {
+        "sv": "Nätverka",
+        "desc": "Arbetar upp ett användbart nätverk både inom och utanför organisationen.",
+    },
+    "Driving vision and purpose": {
+        "sv": "Driva vision och syfte",
+        "desc": "Definierar och kommunicerar en tydlig vision som motiverar andra.",
+    },
+    "Optimizing processes": {
+        "sv": "Processoptimering",
+        "desc": "Identifierar förbättringar och effektiviserar processer och arbetssätt.",
+    },
+    "Drive": {
+        "sv": "Drivkraft",
+        "desc": "Mycket motiverad och driven, tar sig an krävande mål med energi och entusiasm.",
+    },
+    "Organizing and prioritizing": {
+        "sv": "Organisera och prioritera",
+        "desc": "Planerar och prioriterar effektivt, skapar struktur och fokus för att nå resultat.",
+    },
+    "Strategic focus": {
+        "sv": "Strategiskt fokus",
+        "desc": "Har ett strategiskt förhållningssätt och agerar långsiktigt med helheten i åtanke.",
+    },
+    "Decisiveness": {
+        "sv": "Beslutsamhet",
+        "desc": "Fattar beslut vid rätt tid på ett tydligt och välgrundat sätt.",
+    },
+    "Embracing diversity": {
+        "sv": "Kulturell medvetenhet",
+        "desc": "Visar intresse för olika perspektiv och kulturer och drar nytta av mångfald.",
+    },
+    "Directing others": {
+        "sv": "Leda andra",
+        "desc": "Ger tydlig riktning och stöd för att säkerställa att andra når sina mål.",
+    },
+}
 
 
 # ─────────────────────────────────────────
@@ -442,8 +536,13 @@ def calculate_b3_underbehaviors_and_clusters(
         mapped_competencies: List[Dict[str, Any]] = []
         for comp in comps:
             v = _find_score(lookup, comp)
+
+            ui = COMPETENCY_UI.get(comp, {})  # <-- VIKTIGT: definiera ui här
+            
             mapped_competencies.append({
                 "name": comp,
+                "label": ui.get("sv", comp),          # svenska för UI
+                "description": ui.get("desc", ""),    # svensk beskrivning
                 "score": float(v) if v is not None else None,
             })
 
