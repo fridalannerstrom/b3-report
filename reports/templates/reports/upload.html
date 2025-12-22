@@ -63,5 +63,76 @@
   if (fileInput) fileInput.setAttribute('accept', '.xlsx,.xls');
 </script>
 
+
+
+  <!-- Radar init: EN gång -->
+  <script>
+  (function () {
+    const elLabels = document.getElementById("radar-labels");
+    const elValues = document.getElementById("radar-values");
+    const canvas = document.getElementById("radarChart");
+    if (!elLabels || !elValues || !canvas) return;
+
+    const labels = JSON.parse(elLabels.textContent);
+    const values = JSON.parse(elValues.textContent);
+    const ctx = canvas.getContext("2d");
+
+    function wrapLabel(label, maxChars = 18) {
+      const words = label.split(" ");
+      const lines = [];
+      let current = "";
+      words.forEach(word => {
+        const next = current ? (current + " " + word) : word;
+        if (next.length <= maxChars) current = next;
+        else { if (current) lines.push(current); current = word; }
+      });
+      if (current) lines.push(current);
+      return lines;
+    }
+
+    const wrappedLabels = labels.map(l => wrapLabel(l, 18));
+
+    window.radarChart = new Chart(ctx, {
+      type: "radar",
+      data: {
+        labels: wrappedLabels,
+        datasets: [{
+          data: values,
+          borderColor: "#028081",
+          backgroundColor: "rgba(2, 128, 129, 0.20)",
+          borderWidth: 2.5,
+          fill: true,
+          pointRadius: 3,
+          pointHoverRadius: 4,
+          pointBackgroundColor: "#028081",
+          pointBorderColor: "#028081",
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false, // ✅ viktigt i PDF
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          r: {
+            min: 0, max: 100,
+            ticks: { display: false },
+            angleLines: { color: "rgba(0,0,0,0.05)" },
+            grid: { circular: true, color: "rgba(0,0,0,0.06)" },
+            pointLabels: {
+              font: { family: "'Work Sans', sans-serif", size: 10, weight: "600" },
+              color: "#222",
+              padding: 12
+            }
+          }
+        }
+      }
+    });
+
+    window.__RADAR_READY__ = true;
+  })();
+  </script>
+
+
 </body>
 </html>
