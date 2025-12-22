@@ -624,8 +624,49 @@ async def _render_pdf_async(url: str, cookie_name: str, cookie_value: Optional[s
         # ✅ Ladda sidan EN gång, i rätt viewport + screen
         await page.goto(url, wait_until="networkidle")
 
-        # (valfritt) om charts behöver lite tid
+        await page.evaluate("window.dispatchEvent(new Event('resize'))")
         await page.wait_for_timeout(300)
+
+        # 1) Vänta på att canvasen finns (men krascha inte om den inte gör det)
+        try:
+            await page.wait_for_selector("#radarChart", timeout=5000)
+        except Exception:
+            # Canvas hittades inte, fortsätt ändå
+            pass
+
+        # 2) Försök konvertera canvas -> img så att den alltid kommer med i PDF
+        await page.evaluate("""
+        () => {
+        const canvas = document.querySelector('#radarChart');
+        if (!canvas) return;
+
+        // Om canvas är 0x0, försök trigga layout
+        window.dispatchEvent(new Event('resize'));
+
+        // Försök skapa en PNG av canvas
+        let dataUrl = null;
+        try {
+            dataUrl = canvas.toDataURL('image/png');
+        } catch (e) {
+            return;
+        }
+        if (!dataUrl || dataUrl.length < 50) return;
+
+        // Skapa en img och ersätt canvas visuellt
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.alt = "Radar chart";
+        img.style.width = canvas.style.width || "100%";
+        img.style.maxWidth = "100%";
+        img.style.display = "block";
+
+        canvas.parentNode.insertBefore(img, canvas);
+        canvas.style.display = "none";
+        }
+        """)
+
+        await page.wait_for_function("() => window.__RADAR_READY__ === true", timeout=8000)
+
 
         pdf_bytes = await page.pdf(
             format="A4",

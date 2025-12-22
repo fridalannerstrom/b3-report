@@ -942,6 +942,16 @@ body.pdf .comp-right{
   width: min(230px, 100%) !important;
 }
 
+body.pdf .radar-inner {
+  height: 340px;
+}
+
+body.pdf #radarChart {
+  width: 100% !important;
+  height: 340px !important;
+  display: block;
+}
+
 /* Responsive */
 @media (max-width: 760px){
   .ub-row{

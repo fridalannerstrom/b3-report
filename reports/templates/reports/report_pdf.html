@@ -5,11 +5,14 @@
 <head>
   <meta charset="utf-8">
   <title>Kompetensrapport</title>
+
+  <link rel="stylesheet" href="{% static 'reports/css/report.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bara EN Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="{% static 'reports/css/report.css' %}">
-<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body class="pdf">
   <div class="report-page">
     {% include "reports/_report_content.html" %}
@@ -19,18 +22,85 @@
   <script>
     const labels = {{ chart_labels|safe }};
     const values = {{ chart_values|safe }};
-
-    const ctx = document.getElementById('competencyChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{ label: 'Kompetenspoäng', data: values }]
-      },
-      options: { responsive: true, animation: false, scales: { y: { beginAtZero: true, max: 5 } } }
-    });
+    const el = document.getElementById('competencyChart');
+    if (el) {
+      const ctx = el.getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Kompetenspoäng', data: values }] },
+        options: { responsive: true, animation: false, scales: { y: { beginAtZero: true, max: 5 } } }
+      });
+    }
   </script>
-  
   {% endif %}
+
+  <!-- Radar init: EN gång -->
+  <script>
+  (function () {
+    const elLabels = document.getElementById("radar-labels");
+    const elValues = document.getElementById("radar-values");
+    const canvas = document.getElementById("radarChart");
+    if (!elLabels || !elValues || !canvas) return;
+
+    const labels = JSON.parse(elLabels.textContent);
+    const values = JSON.parse(elValues.textContent);
+    const ctx = canvas.getContext("2d");
+
+    function wrapLabel(label, maxChars = 18) {
+      const words = label.split(" ");
+      const lines = [];
+      let current = "";
+      words.forEach(word => {
+        const next = current ? (current + " " + word) : word;
+        if (next.length <= maxChars) current = next;
+        else { if (current) lines.push(current); current = word; }
+      });
+      if (current) lines.push(current);
+      return lines;
+    }
+
+    const wrappedLabels = labels.map(l => wrapLabel(l, 18));
+
+    window.radarChart = new Chart(ctx, {
+      type: "radar",
+      data: {
+        labels: wrappedLabels,
+        datasets: [{
+          data: values,
+          borderColor: "#028081",
+          backgroundColor: "rgba(2, 128, 129, 0.20)",
+          borderWidth: 2.5,
+          fill: true,
+          pointRadius: 3,
+          pointHoverRadius: 4,
+          pointBackgroundColor: "#028081",
+          pointBorderColor: "#028081",
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false, // ✅ viktigt i PDF
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          r: {
+            min: 0, max: 100,
+            ticks: { display: false },
+            angleLines: { color: "rgba(0,0,0,0.05)" },
+            grid: { circular: true, color: "rgba(0,0,0,0.06)" },
+            pointLabels: {
+              font: { family: "'Work Sans', sans-serif", size: 10, weight: "600" },
+              color: "#222",
+              padding: 12
+            }
+          }
+        }
+      }
+    });
+
+    window.__RADAR_READY__ = true;
+  })();
+  </script>
+
 </body>
 </html>
