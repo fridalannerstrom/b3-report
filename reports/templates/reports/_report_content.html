@@ -9,29 +9,27 @@
 
   <div class="lead">
     <p>
-      Denna rapport bygger enbart på <strong>din egen skattning</strong> av hur du brukar agera i olika
-      arbetssituationer.
+      Denna rapport bygger enbart på <strong>din egen skattning</strong> av hur du brukar agera i olika arbetssituationer.
     </p>
   </div>
 
   <div class="body-text">
     <p>
-      Resultaten ska därför inte ses som ett facit eller som en beskrivning av hur du kan eller bör
-      bete dig i alla sammanhang. De speglar i stället de beteenden som i nuläget faller dig mest
-      naturligt, samt de områden där du oftast hämtar energi i ditt ledarskap.
+      Resultaten ska därför inte ses som ett facit eller som en beskrivning av hur du kan eller bör bete dig i alla
+      sammanhang. De speglar i stället de beteenden som i nuläget faller dig mest naturligt, samt de områden som oftast
+      tar mest energi i ditt ledarskap.
     </p>
 
     <p>
-      Eftersom olika beteenden fyller olika funktioner är det varken möjligt eller eftersträvansvärt att
-      ligga högt på allt. Rapporten visar i stället vilka arbetssätt som kommer lätt för dig och var du i
-      vissa situationer kan behöva en mer medveten anpassning, beroende på sammanhang och krav i rollen.
+      Eftersom olika beteenden fyller olika funktioner är det varken möjligt eller eftersträvansvärt att ligga högt på allt.
+      Rapporten visar i stället vilka arbetssätt som kommer lätt för dig och var du i vissa situationer kan behöva en mer
+      medveten anpassning, beroende på sammanhang och krav i rollen.
     </p>
 
     <p>
-      Rapporten är ett verktyg för självinsikt och reflektion, inte en värdering av prestation eller
-      förmåga. Den kan hjälpa dig att förstå vilka beteenden som kommer mer naturligt för dig, och vilka
-      som kan kräva mer energi att använda. Tillsammans utgör dessa en grund för fortsatt utveckling inom
-      ramen för B3:s ledarskapsprogram.
+      Rapporten är ett verktyg för självinsikt och reflektion – inte en värdering av prestation eller förmåga. Den kan
+      hjälpa dig att förstå vilka beteenden som kommer mer naturligt för dig, och vilka som kan kräva mer energi att
+      använda. Tillsammans utgör dessa en grund för fortsatt utveckling inom ramen för B3s ledarskap.
     </p>
   </div>
 
@@ -308,18 +306,26 @@
     <h2 class="page-title-xl no-margin">Inledning till visuell översikt av mappning och kompetensresultat</h2>
     <div class="lead">
       <p>
-      Denna del av rapporten ger en fördjupad förståelse för hur dina resultat har tagits fram och hur de hänger ihop. Här visas hur resultaten på B3:s ledarskapsbeteenden bygger på dina svar i TQ:s självskattningsformulär och hur dessa har mappats till underliggande kompetenser. </p>
+        I rapporten visas även hur dina resultat från TQ:s kompetenser har mappats till B3:s ledarbeteenden.</p>
       <p>
-Självskattningsformuläret mäter ett antal beteenden och kompetenser, vilka har analyserats och kopplats till de specifika ledarbeteenden som ingår i B3:s ledarskapsmodell. Mappningen har genomförts i nära samarbete mellan TQ AI Nordic och B3 för att säkerställa att kopplingarna är relevanta, genomtänkta och metodiskt hållbara.
-      </p><p>Syftet med denna översikt är att skapa transparens och spårbarhet mellan:
-        <ul>
-          <li>vad verktyget faktiskt mäter, och</li>
-          <li>hur resultaten översätts till B3:s ledarskapsbeteenden.</li>
-        </ul>
+        Självskattningen mäter ett antal underliggande beteenden och kompetenser, vilka har analyserats och kopplats till de
+        specifika ledarbeteenden som ingår i B3:s ledarmodell. Denna mappning har genomförts i nära samarbete med B3 för att
+        säkerställa relevans och validitet. </p>
 
-<p>
-Som appendix finns därför en visuell översikt som visar vilka TQ-kompetenser som ligger till grund för respektive ledarskapsbeteende. Tillsammans med tillhörande kompetensdefinitioner ger detta dig möjlighet att se hur dina resultat hänger ihop, och att tolka dem i ett bredare sammanhang utifrån B3:s ledarskapsramverk.
-    </p>
+      <p>Syftet är att skapa en transparent och spårbar koppling mellan:
+      <ul>
+        <li>vad verktyget faktiskt mäter, och</li>
+        <li>hur resultaten översätts till B3:s ledarbeteenden.</li>
+      </ul>
+      <p>
+        Som appendix finns därför en översiktlig visualisering av hur mappningen är uppbyggd. Den visar vilka TQ-kompetenser
+        som ligger till grund för respektive ledarskapsbeteende, så att du tydligt kan se hur dina resultat hänger ihop och
+        hur de kan tolkas i relation till B3:s ledaramverk.
+      </p>
+      <p>
+        För ytterligare transparens presenteras även en översikt av dina resultat på TQ:s kompetenser, tillsammans med
+        tillhörande definitioner för varje kompetens.
+      </p>
   </header>
 
   {% for cluster in b3_clusters %}
@@ -406,7 +412,90 @@ Som appendix finns därför en visuell översikt som visar vilka TQ-kompetenser 
 
       </div>
     </article>
+
   {% endfor %}
+
+  
+
+        <!-- =========================
+     AVSLUTNING (ny sista sida)
+     Lägg denna SEKTION allra sist i din report_pdf.html
+========================== -->
+
+{% if insights.most_natural and insights.needs_development %}
+<section class="page page-closing page-intro">
+
+  <div class="section-label">AVSLUTNING</div>
+  <h2 class="page-title">Summering och reflektion</h2>
+
+  <div class="lead">
+    <p>
+      Nedan följer en kort sammanfattning av resultatet, samt några frågor som kan hjälpa dig att knyta ihop insikterna.
+    </p>
+  </div>
+
+  <div class="body-text">
+
+    <!-- 1) Superkort faktabaserad summering -->
+    <h3 class="section-title">Sammanfattning av ditt resultat</h3>
+    <p>
+      Din självskattning visar att det ledarbeteende som i nuläget faller dig mest naturligt är
+      <strong>{{ insights.most_natural.title }}</strong>.
+    </p>
+    <p>
+      Resultatet visar samtidigt att <strong>{{ insights.needs_development.title }}</strong> är det ledarbeteende som i nuläget
+      kan kräva mer medvetenhet och energi, beroende på sammanhang och krav i rollen.
+    </p>
+
+    <!-- 2) Reflekterande medskick (utan att hitta på) -->
+    <h3 class="section-title">Ett medskick för fortsatt reflektion</h3>
+    <p>
+      De beteenden som faller dig mest naturligt kan ofta användas som en styrka i vardagen och bidra till trygghet och tydlighet
+      i ditt ledarskap. Samtidigt kan de bli så självklara att de sällan ifrågasätts.
+    </p>
+    <p>
+      Resultatet synliggör också vilka beteenden som kan kräva mer medveten anpassning i vissa situationer. Det innebär inte att
+      dessa beteenden är sämre, utan att de kan ta mer energi att använda – särskilt i sammanhang där kraven i rollen förändras.
+    </p>
+
+    <!-- 3) Reflektionsfrågor kopplade till top + lägst -->
+    <h3 class="section-title">Frågor att ta med dig</h3>
+    <ul class="closing-questions">
+      <li>
+        I vilka situationer kommer <strong>{{ insights.most_natural.title }}</strong> särskilt till sin rätt i ditt ledarskap?
+      </li>
+      <li>
+        Finns det sammanhang där detta beteende ibland riskerar att ta för stor plats?
+      </li>
+      <li>
+        I vilka situationer märker du att <strong>{{ insights.needs_development.title }}</strong> kräver mer medvetenhet eller energi från dig?
+      </li>
+      <li>
+        Hur kan ökad medvetenhet om dessa beteenden hjälpa dig i din vardag som ledare?
+      </li>
+    </ul>
+
+    <!-- 4) Kollegans "allra sist"-text (exakt) -->
+    <div class="closing-final-box">
+      <h3 class="closing-final-title">Avslutning</h3>
+
+      <p><strong>Tack för att du besvarat självskattningen och tagit del av rapporten!</strong></p>
+
+      <p>
+        Vi hoppas att denna rapport har bidragit med värdefulla insikter och skapat en tydligare bild av ditt ledarskap och dina
+        naturliga beteendemönster.
+      </p>
+
+      <p>
+        Resultaten är avsedda att fungera som ett stöd i fortsatt reflektion, både i vardagen och i dialog kring ledarskapets
+        olika sammanhang.
+      </p>
+    </div>
+
+  </div>
+</section>
+{% endif %}
+
 
 </section>
 

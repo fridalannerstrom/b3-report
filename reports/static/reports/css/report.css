@@ -956,6 +956,27 @@ body.pdf #radarChart {
   display: block;
 }
 
+/* Avslutning */
+.page-closing .closing-questions{
+  margin: 10px 0 0;
+  padding-left: 16px;
+}
+.page-closing .closing-questions li{
+  margin: 6px 0;
+}
+
+.page-closing .closing-final-box{
+  margin-top: 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--b3-beige);
+}
+.page-closing .closing-final-title{
+  margin: 0 0 8px;
+}
+
+
 /* Responsive */
 @media (max-width: 760px){
   .ub-row{
