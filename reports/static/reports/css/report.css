@@ -177,7 +177,7 @@ h1{
 .result-card{
   --accent: #028081;         /* fallback */
   --accent-soft: rgba(2,128,129,.18);
-  --accent-ring: #ffffff;    /* ring runt plupp */
+  --accent-ring: #ffffff !important;    /* ring runt plupp */
 }
 
 /* Matcha era 5 huvudbeteenden (från din ikonbild: teal, gul, blå, rosa, grå) */
@@ -201,7 +201,7 @@ h1{
   --accent-soft: rgba(229,106,134,.18);
 }
 
-.result-card[data-cluster="rekrytera-utveckla-och-behall-ratt-formagor-och-personer"]{
+.result-card[data-cluster="rekrytera-utveckla-och-behalla-ratt-formagor-och-personer"]{
   --accent: #9AA3A8;         /* grey */
   --accent-soft: rgba(154,163,168,.20);
 }
@@ -220,12 +220,12 @@ h1{
    ========================= */
 
 .b3-scale--small .dot{
-  border-color: rgba(0,0,0,.18);   /* “tom” plupp lite neutral */
+  border-color: rgb(255, 255, 255);   /* “tom” plupp lite neutral */
 }
 
 .b3-scale--small .dot.is-on{
   background: var(--accent);
-  border-color: rgba(0,0,0,.12);
+  border-color: rgba(255, 255, 255, 0.918);
 }
 
 .dot.is-half{
@@ -244,7 +244,7 @@ h1{
   --accent: #028081;
   --accent-soft: rgba(2, 128, 129, .18);
   --accent-ring: #ffffff;
-  --dot-off: #C1D5D1;     /* kantfärg på tomma pluppar */
+  --dot-off: #e9e4dd;     /* kantfärg på tomma pluppar */
 }
 
 /* 1) Donut använder accent */
@@ -260,7 +260,7 @@ h1{
 
 .result-card .b3-scale--small .dot.is-on{
   background: var(--accent);
-  border-color: var(--dot-off);
+  border-color: var(--dot-off) !important;
 }
 
 /* Halv-plupp: vänster accent, höger transparent */
@@ -748,13 +748,13 @@ h1{
   height: 18px;
   border-radius: 999px;
   background: transparent;
-  border: 3px solid #C1D5D1;
+  border: 2px solid;
 }
 
 .b3-scale--small .dot--small{
   width: 18px;
   height: 18px;
-  border-width: 3px;
+  border-width: 2px;
 }
 
 .b3-scale--small .dot.is-on{
