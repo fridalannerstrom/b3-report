@@ -691,6 +691,10 @@ def calculate_b3_underbehaviors_and_clusters(
         else:
             human_cluster_line = "Ingen uträkning (saknar underbeteenden)."
 
+        weight_sum = sum(x["weight"] for x in items) if items else None
+        score_5_mean = (total_score / weight_sum) if (total_score is not None and weight_sum) else None
+
+
         clusters.append({
             "name": cluster_name,
             "title": cluster_title,
@@ -698,6 +702,7 @@ def calculate_b3_underbehaviors_and_clusters(
 
             "total_score": total_score,
             "max_total": max_total,
+            "score_5_mean": score_5_mean,
 
             # ✅ för UI
             "pct_total": pct_percent,                 # 0..100
@@ -742,8 +747,10 @@ def calculate_b3_underbehaviors_and_clusters(
     ]
 
     clusters_with_score = [c for c in clusters if c.get("total_score") is not None]
-    most_natural = max(clusters_with_score, key=lambda c: c["total_score"]) if clusters_with_score else None
-    needs_development = min(clusters_with_score, key=lambda c: c["total_score"]) if clusters_with_score else None
+    clusters_with_mean = [c for c in clusters if c.get("score_5_mean") is not None]
+    most_natural = max(clusters_with_mean, key=lambda c: c["score_5_mean"]) if clusters_with_mean else None
+    needs_development = min(clusters_with_mean, key=lambda c: c["score_5_mean"]) if clusters_with_mean else None
+
 
     valid_under = [u for u in underbehaviors if u.get("score_5") is not None]
     top_3_energy = sorted(valid_under, key=lambda u: u["score_5"], reverse=True)[:3]
