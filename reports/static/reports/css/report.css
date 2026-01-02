@@ -748,13 +748,13 @@ h1{
   height: 18px;
   border-radius: 999px;
   background: transparent;
-  border: 2px solid;
+  border: 2px solid #C1D5D1;
 }
 
 .b3-scale--small .dot--small{
   width: 18px;
   height: 18px;
-  border-width: 2px;
+  border-width: 2px solid #C1D5D1;
 }
 
 .b3-scale--small .dot.is-on{
