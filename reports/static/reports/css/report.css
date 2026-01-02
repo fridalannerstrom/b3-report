@@ -206,6 +206,82 @@ h1{
   --accent-soft: rgba(154,163,168,.20);
 }
 
+
+
+/* =========================================================
+   Mapping-card använder samma accent-variabler som result-card
+   ========================================================= */
+
+.mapping-card{
+  /* default (fallback) */
+  --accent: #028081;
+  --accent-soft: rgba(2, 128, 129, .18);
+  --accent-ring: #ffffff;
+  --dot-off: #C1D5D1;
+}
+
+/* Headern (färgbandet) */
+.mapping-card .mapping-card__header{
+  background: var(--accent) !important;
+}
+
+/* "Ditt resultat" prickar */
+.mapping-card .b3-scale--small .dot.is-on{
+  background: var(--accent) !important;
+  border-color: rgba(0,0,0,0.05);
+}
+
+.mapping-card .b3-scale--small .dot.is-half{
+  background: linear-gradient(90deg, var(--accent) 50%, transparent 50%) !important;
+}
+
+/* Competency bars */
+.mapping-card .comp-bar .comp-fill{
+  background: var(--accent) !important;
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* (valfritt) lite ton i expand-boxen så den känns “kopplad” */
+.mapping-card .ub-expand{
+  border-color: color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,.06));
+}
+
+/* =========================================================
+   Koppla mapping-card till dina befintliga data-cluster färger
+   (Gör en per huvudbeteende)
+   ========================================================= */
+
+/* Exempel: Kommunicera (gul) */
+.mapping-card[data-cluster="kommunicera-precist-och-tydligt"]{
+  --accent: #FBC24B;
+  --accent-soft: rgba(243,194,75,.22);
+}
+
+/* Exempel: Affärs- och värderingsdrivet (turkos/teal) */
+.mapping-card[data-cluster="affars-och-varderingsdrivet-ledarskap"]{
+  --accent: #22AEB0;
+  --accent-soft: rgba(2,128,129,.18);
+}
+
+/* Exempel: Bygg och främja (blå) */
+.mapping-card[data-cluster="bygg-och-framja-en-prestationsdriven-kultur"]{
+  --accent: #3F6FA8;
+  --accent-soft: rgba(63,111,168,.18);
+}
+
+/* Exempel: Driva mot (rosa) */
+.mapping-card[data-cluster="driva-mot-ambitiosa-och-matbara-resultatmal"]{
+  --accent: #D85A7D;
+  --accent-soft: rgba(216,90,125,.18);
+}
+
+/* Exempel: Rekrytera (grå) */
+.mapping-card[data-cluster="rekrytera-utveckla-och-behall-ratt-formagor-och-personer"]{
+  --accent: #9AA0A6;
+  --accent-soft: rgba(154,160,166,.18);
+}
+
+
 /* =========================
    Donut använder accent
    ========================= */

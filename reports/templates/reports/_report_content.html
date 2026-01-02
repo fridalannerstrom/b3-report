@@ -329,99 +329,102 @@
       </p>
   </header>
 
-  {% for cluster in b3_clusters %}
-    <article class="mapping-card">
 
-      <div class="mapping-card__header">
-        <h3 class="mapping-card__title">{{ cluster.title }}</h3>
-      </div>
+{% for cluster in b3_clusters %}
+<article class="mapping-card"
+  {% if cluster.name == "Affärs- och värderingsdrivet ledarskap" %}
+    data-cluster="affars-och-varderingsdrivet-ledarskap"
+  {% elif cluster.name == "Kommunicera precist och tydligt" %}
+    data-cluster="kommunicera-precist-och-tydligt"
+  {% elif cluster.name == "Bygg och främja en prestationsdriven kultur" %}
+    data-cluster="bygg-och-framja-en-prestationsdriven-kultur"
+  {% elif cluster.name == "Driva mot ambitiösa och mätbara resultatmål" %}
+    data-cluster="driva-mot-ambitiosa-och-matbara-resultatmal"
+  {% elif cluster.name == "Rekrytera, utveckla och behåll rätt förmågor och personer" %}
+    data-cluster="rekrytera-utveckla-och-behall-ratt-formagor-och-personer"
+  {% endif %}
+>
 
-      <div class="mapping-card__body">
+    <div class="mapping-card__header">
+      <h3 class="mapping-card__title">{{ cluster.title }}</h3>
+    </div>
 
-        {% for u in b3_underbehaviors %}
-          {% if u.cluster == cluster.name %}
+    <div class="mapping-card__body">
 
-            <div class="ub-block">
+      {% for u in b3_underbehaviors %}
+        {% if u.cluster == cluster.name %}
 
-              <!-- Underbehavior row -->
-              <div class="ub-row">
-                <div class="ub-name">{{ u.name }}</div>
+          <div class="ub-block">
 
-                <div class="ub-right">
-                  <div class="ub-small-label">Ditt resultat</div>
+            <div class="ub-row">
+              <div class="ub-name">{{ u.name }}</div>
 
-                  <div class="b3-scale b3-scale--small" aria-label="Skala 1 till 5">
-                    {% with steps=u.score_5_half_steps %}
-                      {% if steps != None %}
-                        {% for i in "12345" %}
-                          {% with step=forloop.counter|add:forloop.counter %}
-                            {% if steps >= step %}
-                              <span class="dot dot--small is-on"></span>
-                            {% elif steps == step|add:"-1" %}
-                              <span class="dot dot--small is-half"></span>
-                            {% else %}
-                              <span class="dot dot--small"></span>
-                            {% endif %}
-                          {% endwith %}
-                        {% endfor %}
-                      {% else %}
-                        <span class="no-data">Ingen data</span>
-                      {% endif %}
-                    {% endwith %}
-                  </div>
+              <div class="ub-right">
+                <div class="ub-small-label">Ditt resultat</div>
+
+                <div class="b3-scale b3-scale--small" aria-label="Skala 1 till 5">
+                  {% with steps=u.score_5_half_steps %}
+                    {% if steps != None %}
+                      {% for i in "12345" %}
+                        {% with step=forloop.counter|add:forloop.counter %}
+                          {% if steps >= step %}
+                            <span class="dot dot--small is-on"></span>
+                          {% elif steps == step|add:"-1" %}
+                            <span class="dot dot--small is-half"></span>
+                          {% else %}
+                            <span class="dot dot--small"></span>
+                          {% endif %}
+                        {% endwith %}
+                      {% endfor %}
+                    {% else %}
+                      <span class="no-data">Ingen data</span>
+                    {% endif %}
+                  {% endwith %}
                 </div>
-              </div>
-
-              <!-- Expand area with competencies -->
-              <div class="ub-expand">
-
-                <div class="ub-expand__title">Bakomliggande TQ-kompetenser</div>
-                <div class="ub-expand__subtitle">Kompetenserna nedan bidrar till resultatet ovan</div>
-
-                <div class="comp-list">
-                    {% for comp in u.mapped_competencies %}
-                      {% with score=comp.score %}
-                      <div class="comp-item">
-                        <div class="comp-left">
-                          <div class="comp-name">{{ comp.label }}</div>
-                            <div class="comp-desc">
-                              {{ comp.description }}
-                            </div>
-                        </div>
-
-                        <div class="comp-right">
-                          <div class="comp-bar" style="--v:{% if score != None %}{{ score }}{% else %}0{% endif %};">
-                            <span class="comp-fill"></span>
-                          </div>
-
-                          <div class="comp-meta">
-                            <div class="comp-ticks">
-                              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    {% endwith %}
-                  {% endfor %}
-                </div>
-
               </div>
             </div>
 
-          {% endif %}
-        {% endfor %}
+            <div class="ub-expand">
+              <div class="ub-expand__title">Bakomliggande TQ-kompetenser</div>
+              <div class="ub-expand__subtitle">Kompetenserna nedan bidrar till resultatet ovan</div>
 
-      </div>
-    </article>
+              <div class="comp-list">
+                {% for comp in u.mapped_competencies %}
+                  {% with score=comp.score %}
+                  <div class="comp-item">
+                    <div class="comp-left">
+                      <div class="comp-name">{{ comp.label }}</div>
+                      <div class="comp-desc">{{ comp.description }}</div>
+                    </div>
 
-  {% endfor %}
+                    <div class="comp-right">
+                      <div class="comp-bar" style="--v:{% if score != None %}{{ score }}{% else %}0{% endif %};">
+                        <span class="comp-fill"></span>
+                      </div>
 
-  
+                      <div class="comp-meta">
+                        <div class="comp-ticks">
+                          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endwith %}
+                {% endfor %}
+              </div>
+            </div>
 
-        <!-- =========================
-     AVSLUTNING (ny sista sida)
-     Lägg denna SEKTION allra sist i din report_pdf.html
-========================== -->
+          </div>
+
+        {% endif %}
+      {% endfor %}
+
+    </div>
+  </article>
+{% endfor %}
+
+
+
 
 {% if insights.most_natural and insights.needs_development %}
 <section class="page page-closing page-intro">
