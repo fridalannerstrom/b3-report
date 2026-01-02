@@ -228,74 +228,75 @@
     </p>
   </header>
 
-  {% for cluster in b3_clusters %}
-  <article class="result-card">
+{% for cluster in b3_clusters %}
+<article class="result-card" data-cluster="{{ cluster.title|slugify }}">
 
-    <div class="result-card__top">
+  <div class="result-card__top">
 
-      <!-- Donut -->
-      <div class="donut-wrap">
-        {% if cluster.total_score != None and cluster.pct_total != None %}
-          <div class="donut" style="--p: {{ cluster.pct_total|floatformat:4 }};">
-            <div class="donut-label">
-              <div class="donut-small">Totalt:</div>
-              <div class="donut-value">{{ cluster.pct_total_text }}%</div>
-            </div>
+    <!-- Donut -->
+    <div class="donut-wrap">
+      {% if cluster.total_score != None and cluster.pct_total != None %}
+        <div class="donut" style="--p: {{ cluster.pct_total|floatformat:4 }};">
+          <div class="donut-label">
+            <div class="donut-small">Totalt:</div>
+            <div class="donut-value">{{ cluster.pct_total_text }}%</div>
           </div>
-        {% else %}
-          <div class="donut donut--empty">
-            <div class="donut-label">
-              <div class="donut-small">Totalt:</div>
-              <div class="donut-value">–</div>
-            </div>
+        </div>
+      {% else %}
+        <div class="donut donut--empty">
+          <div class="donut-label">
+            <div class="donut-small">Totalt:</div>
+            <div class="donut-value">–</div>
           </div>
-        {% endif %}
-      </div>
-
-      <!-- Title + description -->
-      <div class="result-main">
-        <h3 class="result-title">{{ cluster.title }}</h3>
-
-        {% if cluster.description %}
-          <p class="result-desc" style="font-size: 11px !important;">{{ cluster.description|linebreaks }}</p>
-        {% endif %}
-      </div>
-
+        </div>
+      {% endif %}
     </div>
 
-    <!-- Underbehaviors list -->
-    <div class="result-list">
-      {% for u in b3_underbehaviors %}
-        {% if u.cluster == cluster.name %}
-          <div class="result-row">
-            <div class="result-row__name">{{ u.name }}</div>
+    <!-- Title + description -->
+    <div class="result-main">
+      <h3 class="result-title">{{ cluster.title }}</h3>
 
-            <div class="b3-scale b3-scale--small" aria-label="Skala 1 till 5">
-              {% with steps=u.score_5_half_steps %}
-                {% if steps != None %}
-                  {% for i in "12345" %}
-                    {% with step=forloop.counter|add:forloop.counter %}
-                      {% if steps >= step %}
-                        <span class="dot dot--small is-on"></span>
-                      {% elif steps == step|add:"-1" %}
-                        <span class="dot dot--small is-half"></span>
-                      {% else %}
-                        <span class="dot dot--small"></span>
-                      {% endif %}
-                    {% endwith %}
-                  {% endfor %}
-                {% else %}
-                  <span class="no-data">Ingen data</span>
-                {% endif %}
-              {% endwith %}
-            </div>
-          </div>
-        {% endif %}
-      {% endfor %}
+      {% if cluster.description %}
+        <p class="result-desc" style="font-size: 11px !important;">{{ cluster.description|linebreaks }}</p>
+      {% endif %}
     </div>
 
-  </article>
-  {% endfor %}
+  </div>
+
+  <!-- Underbehaviors list -->
+  <div class="result-list">
+    {% for u in b3_underbehaviors %}
+      {% if u.cluster == cluster.name %}
+        <div class="result-row">
+          <div class="result-row__name">{{ u.name }}</div>
+
+          <div class="b3-scale b3-scale--small" aria-label="Skala 1 till 5">
+            {% with steps=u.score_5_half_steps %}
+              {% if steps != None %}
+                {% for i in "12345" %}
+                  {% with step=forloop.counter|add:forloop.counter %}
+                    {% if steps >= step %}
+                      <span class="dot dot--small is-on"></span>
+                    {% elif steps == step|add:"-1" %}
+                      <span class="dot dot--small is-half"></span>
+                    {% else %}
+                      <span class="dot dot--small"></span>
+                    {% endif %}
+                  {% endwith %}
+                {% endfor %}
+              {% else %}
+                <span class="no-data">Ingen data</span>
+              {% endif %}
+            {% endwith %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+</article>
+{% endfor %}
+
 
 </section>
 

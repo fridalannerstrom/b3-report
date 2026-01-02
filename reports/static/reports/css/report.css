@@ -169,6 +169,112 @@ h1{
   color: #b42318;
 }
 
+/* =========================
+   Per huvudbeteende: accent-färg
+   (byt hex-koder om ni har exakta brandfärger)
+   ========================= */
+
+.result-card{
+  --accent: #028081;         /* fallback */
+  --accent-soft: rgba(2,128,129,.18);
+  --accent-ring: #ffffff;    /* ring runt plupp */
+}
+
+/* Matcha era 5 huvudbeteenden (från din ikonbild: teal, gul, blå, rosa, grå) */
+.result-card[data-cluster="affars-och-varderingsdrivet-ledarskap"]{
+  --accent: #22AEB0;         /* teal */
+  --accent-soft: rgba(34,174,176,.18);
+}
+
+.result-card[data-cluster="kommunicera-precist-och-tydligt"]{
+  --accent: #F3C24B;         /* yellow */
+  --accent-soft: rgba(243,194,75,.22);
+}
+
+.result-card[data-cluster="bygg-och-framja-en-prestationsdriven-kultur"]{
+  --accent: #3D73B8;         /* blue */
+  --accent-soft: rgba(61,115,184,.18);
+}
+
+.result-card[data-cluster="driva-mot-ambitiosa-och-matbara-resultatmal"]{
+  --accent: #E56A86;         /* pink */
+  --accent-soft: rgba(229,106,134,.18);
+}
+
+.result-card[data-cluster="rekrytera-utveckla-och-behall-ratt-formagor-och-personer"]{
+  --accent: #9AA3A8;         /* grey */
+  --accent-soft: rgba(154,163,168,.20);
+}
+
+/* =========================
+   Donut använder accent
+   ========================= */
+
+.donut{
+  background:
+    conic-gradient(var(--accent) calc(var(--p) * 1%), rgba(0,0,0,.10) 0);
+}
+
+/* =========================
+   Underbeteende-pluppar använder accent
+   ========================= */
+
+.b3-scale--small .dot{
+  border-color: rgba(0,0,0,.18);   /* “tom” plupp lite neutral */
+}
+
+.b3-scale--small .dot.is-on{
+  background: var(--accent);
+  border-color: rgba(0,0,0,.12);
+}
+
+.dot.is-half{
+  background:
+    linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+  border-color: rgba(0,0,0,.18);
+}
+
+
+/* =========================
+   Result-card accent system
+   ========================= */
+
+/* Default accent om inget data-cluster matchar */
+.result-card{
+  --accent: #028081;
+  --accent-soft: rgba(2, 128, 129, .18);
+  --accent-ring: #ffffff;
+  --dot-off: #C1D5D1;     /* kantfärg på tomma pluppar */
+}
+
+/* 1) Donut använder accent */
+.result-card .donut{
+  background:
+    conic-gradient(var(--accent) calc(var(--p) * 1%), rgba(0,0,0,.10) 0);
+}
+
+/* 2) Små skala-pluppar använder accent */
+.result-card .b3-scale--small .dot{
+  border-color: var(--dot-off);
+}
+
+.result-card .b3-scale--small .dot.is-on{
+  background: var(--accent);
+  border-color: var(--dot-off);
+}
+
+/* Halv-plupp: vänster accent, höger transparent */
+.result-card .b3-scale--small .dot.is-half{
+  background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+  border-color: var(--dot-off);
+}
+
+/* (Valfritt) Pill/andra accent-element om du vill */
+.result-card .pill strong{
+  color: rgba(0,0,0,.88);
+}
+
+
 /* ---------------------------------------
    Preview (PDF/Report surface)
 ---------------------------------------- */
