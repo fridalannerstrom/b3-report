@@ -421,9 +421,6 @@
                   <div class="comp-left">
                     <div class="comp-name">
                       {{ comp.label }}
-                      {% if comp.score != None %}
-                      <small style="opacity:.7">({{ comp.score|floatformat:6 }})</small>
-                      {% endif %}
                     </div>
               
                     <div class="comp-desc">{{ comp.description }}</div>
