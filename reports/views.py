@@ -401,6 +401,73 @@ B3_CLUSTER_DEFS = {
     },
 }
 
+B3_CLUSTER_QUESTIONS = {
+  "Affärs- och värderingsdrivet ledarskap": {
+    "top": [
+      "I vilka situationer använder du affärsfokus och värderingar som en tydlig kompass i beslut?",
+      "Hur säkerställer du balans mellan kundvärde/lönsamhet och omtanke om människor i vardagen?",
+      "När du är som mest effektiv i detta beteende, vad gör du konkret som skapar trygghet och förtroende?"
+    ],
+    "low": [
+      "I vilka lägen blir det svårast att hålla ihop kundvärde, lönsamhet och värderingar samtidigt?",
+      "Vilka beslut eller samtal drar du dig för när det krävs mod och tydlighet?",
+      "Vad skulle vara ett litet, konkret steg för att bli tydligare med mål och riktning kommande vecka?"
+    ],
+  },
+
+  "Kommunicera precist och tydligt": {
+    "top": [
+      "Hur märks det i din kommunikation att du skapar tydlighet och minskar missförstånd?",
+      "När tar du initiativ till dialog i svåra frågor, och vad gör att det fungerar bra?",
+      "Hur bidrar du till gemensam riktning genom att lyfta det som fungerar och stå bakom beslut?"
+    ],
+    "low": [
+      "I vilka situationer blir ditt budskap lätt otydligt eller för “mycket på en gång”?",
+      "När undviker du dialog i svåra frågor, och vad skulle underlätta att ta den tidigare?",
+      "Vilken enkel struktur (syfte, beslut, nästa steg) kan du testa för att öka tydlighet i kommande kommunikation?"
+    ],
+  },
+
+  "Bygg och främja en prestationsdriven kultur": {
+    "top": [
+      "Hur sätter du förväntningar som skapar ansvar och framdrift utan att skapa otrygghet?",
+      "Hur bygger du team utifrån både kompetens och kulturmatch i praktiken?",
+      "Vad gör du för att skapa en miljö där olika perspektiv faktiskt får utrymme?"
+    ],
+    "low": [
+      "Var brister det oftast: förväntningar, ansvar, initiativ eller tydlighet i beslut?",
+      "Vilket beteende från dig skulle mest bidra till mer transparens och trygghet i teamet?",
+      "Vilket litet initiativ kan du ta för att stärka ansvarstagande och initiativ i gruppen kommande vecka?"
+    ],
+  },
+
+  "Driva mot måldrivna och ambitiösa mål": {
+    "top": [
+      "Hur gör du mål tydliga så att andra förstår dem och känner engagemang?",
+      "Hur följer du upp systematiskt och justerar utan att tappa fart?",
+      "Hur samarbetar du över gränser för att säkra leverans och lönsamhet?"
+    ],
+    "low": [
+      "När blir målbilden otydlig, och vad behöver du göra annorlunda för att förankra den?",
+      "Hur ofta följer du upp idag, och vad skulle vara en rimlig uppföljningsrytm framåt?",
+      "Vilket samarbete över gränser skulle ge störst effekt om du initierade det nu?"
+    ],
+  },
+
+  "Rekrytera, utveckla och behålla rätt förmågor och personer": {
+    "top": [
+      "Hur fångar du både kompetens, kulturmatch och utvecklingsvilja när du bedömer människor?",
+      "Hur skapar du tydliga förväntningar som hjälper andra att växa?",
+      "Hur bidrar du till en inkluderande lärandekultur i vardagen?"
+    ],
+    "low": [
+      "Var uppstår störst osäkerhet: kravprofil, förväntningar, utveckling eller att fatta svåra beslut?",
+      "Hur tydlig är du i roller och förväntningar, och vad skulle göra det tydligare?",
+      "Vilken konkret insats kan du göra för att stärka lärande och utveckling i teamet den här månaden?"
+    ],
+  },
+}
+
 
 
 # ─────────────────────────────────────────
@@ -605,7 +672,7 @@ def calculate_b3_underbehaviors_and_clusters(
                 "score": score_val,
                 "pct": pct,
             })
-            
+
         under_score = _simple_average(comp_values)
 
         under_half = round_to_half(under_score)
@@ -761,14 +828,32 @@ def calculate_b3_underbehaviors_and_clusters(
     top_3_energy = sorted(valid_under, key=lambda u: u["score_5"], reverse=True)[:3]
     bottom_3_energy = sorted(valid_under, key=lambda u: u["score_5"])[:3]
 
+    def _pick_questions(cluster: Optional[Dict[str, Any]], kind: str) -> List[str]:
+        """
+        cluster är ett dict från clusters-listan, t.ex:
+        {"name": "...", "title": "...", "description": "...", ...}
+        kind = "top" eller "low"
+        """
+        if not cluster:
+            return []
+        cluster_name = cluster.get("name")
+        return B3_CLUSTER_QUESTIONS.get(cluster_name, {}).get(kind, [])[:3]
+
+
     insights = {
         "most_natural": most_natural,
         "needs_development": needs_development,
         "top_energy": top_3_energy,
         "low_energy": bottom_3_energy,
+
+        # ✅ Nya: 3 frågor per "top/lägst"
+        "most_natural_questions": _pick_questions(most_natural, "top"),
+        "needs_development_questions": _pick_questions(needs_development, "low"),
     }
 
     return underbehaviors, clusters, calc_explain_text, under_compare_rows, cluster_compare_rows, insights
+
+
 
 
 

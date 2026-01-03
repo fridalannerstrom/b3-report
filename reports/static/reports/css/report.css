@@ -1215,10 +1215,16 @@ body.pdf #radarChart {
 }
 
 /* Avslutning */
+
+.page-closing {
+  margin-top: 150px;
+}
+
 .page-closing .closing-questions{
   margin: 10px 0 0;
   padding-left: 16px;
 }
+
 .page-closing .closing-questions li{
   margin: 6px 0;
 }
