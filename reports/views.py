@@ -884,7 +884,7 @@ def calculate_b3_underbehaviors_and_clusters(
         "most_natural_questions": _pick_questions(most_natural, "top"),
         "needs_development_questions": _pick_questions(needs_development, "low"),
     }
-    
+
     return underbehaviors, clusters, calc_explain_text, under_compare_rows, cluster_compare_rows, insights
 
 
