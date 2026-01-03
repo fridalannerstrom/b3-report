@@ -51,6 +51,18 @@
   const values = JSON.parse(elValues.textContent || "[]"); // 0–100
   const ctx = canvas.getContext("2d");
 
+  const pointColors = labels.map(l => {
+  const s = (l || "").toLowerCase();
+
+  if (s.includes("affär") || s.includes("affars")) return "#42BBC1";
+  if (s.includes("kommunicera")) return "#F0BD47";
+  if (s.includes("bygg")) return "#426DAA";
+  if (s.includes("driva")) return "#DF668A";
+  if (s.includes("rekrytera")) return "#9D9D9C";
+
+  return "#028081"; // fallback
+});
+
   // -----------------------------
   // Global defaults (canvas text)
   // -----------------------------
@@ -185,7 +197,7 @@
       // ✅ Prick-styling (justera här)
       const ringFill   = "#ffffff";
       const ringStroke = "rgba(0,0,0,0.10)";
-      const dotColor   = "#028081";
+      const fallbackDotColor = "#028081";
       const ringRadius = 11;   // yttre ring (större = tydligare)
       const dotRadius  = 6;    // inre dot
       const ringWidth  = 1.2;
@@ -206,6 +218,8 @@
 
         const x = pt.x;
         const y = pt.y;
+
+        const dotColor = pointColors[i] || fallbackDotColor;
 
         // ring
         ctx.beginPath();
@@ -350,6 +364,7 @@
   });
 })();
 </script>
+
 
 </body>
 </html>

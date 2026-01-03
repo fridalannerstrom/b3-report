@@ -140,10 +140,22 @@
     <div class="overview-cards">
 
       <!-- Card 1: Mest naturligt -->
-      <article class="overview-card">
+        <article class="overview-card"
+          {% if insights.most_natural.name == "Affärs- och värderingsdrivet ledarskap" %}
+            data-cluster="affars-och-varderingsdrivet-ledarskap"
+          {% elif insights.most_natural.name == "Kommunicera precist och tydligt" %}
+            data-cluster="kommunicera-precist-och-tydligt"
+          {% elif insights.most_natural.name == "Bygg och främja en prestationsdriven kultur" %}
+            data-cluster="bygg-och-framja-en-prestationsdriven-kultur"
+          {% elif insights.most_natural.name == "Driva mot måldrivna och ambitiösa mål" %}
+            data-cluster="driva-mot-ambitiosa-och-matbara-resultatmal"
+          {% elif insights.most_natural.name == "Rekrytera, utveckla och behåll rätt förmågor och personer" %}
+            data-cluster="rekrytera-utveckla-och-behall-ratt-formagor-och-personer"
+          {% endif %}
+        >
         <div class="overview-card__top">
           <p class="overview-card__desc"><strong>Ledarbeteende som ligger nära ditt naturliga sätt att leda</strong></p>
-          <h3 class="overview-card__title">{{ insights.most_natural.title }}</h3>
+          <h3 class="overview-card__title"><span class="bullet-insights" aria-hidden="true"></span> {{ insights.most_natural.title }}</h3>
           {% if insights.most_natural.description %}
             <p class="overview-card__desc">{{ insights.most_natural.description }}</p>
           {% else %}
@@ -177,10 +189,23 @@
       </article>
 
       <!-- Card 2: Behöver utvecklas -->
-      <article class="overview-card">
+        <article class="overview-card"
+          {% if insights.needs_development.name == "Affärs- och värderingsdrivet ledarskap" %}
+            data-cluster="affars-och-varderingsdrivet-ledarskap"
+          {% elif insights.needs_development.name == "Kommunicera precist och tydligt" %}
+            data-cluster="kommunicera-precist-och-tydligt"
+          {% elif insights.needs_development.name == "Bygg och främja en prestationsdriven kultur" %}
+            data-cluster="bygg-och-framja-en-prestationsdriven-kultur"
+          {% elif insights.needs_development.name == "Driva mot måldrivna och ambitiösa mål" %}
+            data-cluster="driva-mot-ambitiosa-och-matbara-resultatmal"
+          {% elif insights.needs_development.name == "Rekrytera, utveckla och behåll rätt förmågor och personer" %}
+            data-cluster="rekrytera-utveckla-och-behall-ratt-formagor-och-personer"
+          {% endif %}
+        >
+
         <div class="overview-card__top">
           <p class="overview-card__desc"><strong>Ledarbeteende som ibland kräver mer fokus och medvetenhet</strong></p>
-          <h3 class="overview-card__title">{{ insights.needs_development.title }}</h3>
+          <h3 class="overview-card__title"><span class="bullet-insights" aria-hidden="true"></span> {{ insights.needs_development.title }}</h3>
           {% if insights.needs_development.description %}
             <p class="overview-card__desc">{{ insights.needs_development.description }}</p>
           {% else %}

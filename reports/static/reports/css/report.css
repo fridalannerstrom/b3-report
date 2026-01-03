@@ -669,6 +669,64 @@ h1{
   align-items: start;
 }
 
+.bullet-insights {
+  --ring: 21px;
+  --dot: 11px;
+  --ring-bg: #fff;
+  --ring-border: rgba(0,0,0,.15);
+  --dot-color: #f472b6;
+
+  width: var(--ring);
+  height: var(--ring);
+  border-radius: 50%;
+  background: var(--ring-bg);
+  border: 1px solid var(--ring-border);
+
+  display: inline-grid;
+  place-items: center;
+  box-shadow: 1px 1px 0 rgba(0,0,0,.04);
+}
+
+/* 👇 själva pricken */
+.bullet-insights::after {
+  content: "";
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 50%;
+  background: var(--dot-color);
+}
+
+/* Driva mot ambitiösa och mätbara resultatmål */
+.overview-card[data-cluster="driva-mot-ambitiosa-och-matbara-resultatmal"]
+  .bullet-insights {
+  --dot-color: #DF668A;
+}
+
+/* Bygg och främja en prestationsdriven kultur */
+.overview-card[data-cluster="bygg-och-framja-en-prestationsdriven-kultur"]
+  .bullet-insights {
+  --dot-color: #426DAA;
+}
+
+/* Kommunicera precist och tydligt */
+.overview-card[data-cluster="kommunicera-precist-och-tydligt"]
+  .bullet-insights {
+  --dot-color: #F0BD47;
+}
+
+/* Affärs- och värderingsdrivet ledarskap */
+.overview-card[data-cluster="affars-och-varderingsdrivet-ledarskap"]
+  .bullet-insights {
+  --dot-color: #42BBC1;
+}
+
+/* Rekrytera, utveckla och behåll rätt förmågor */
+.overview-card[data-cluster="rekrytera-utveckla-och-behall-ratt-formagor-och-personer"]
+  .bullet-insights {
+  --dot-color: #9D9D9C;
+}
+
+
 /* top/left text area */
 .overview-card__title{
   margin: 20px 0 10px;
