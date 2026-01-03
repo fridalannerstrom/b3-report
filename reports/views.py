@@ -468,6 +468,29 @@ B3_CLUSTER_QUESTIONS = {
   },
 }
 
+B3_CLUSTER_ONE_LINERS = {
+    "Affärs- och värderingsdrivet ledarskap": {
+        "top": "Det innebär att du ofta leder med både kundvärde och omtanke i fokus, tar ansvar för helheten och skapar trygghet genom tydlighet och värderingsstyrda beslut.",
+        "low": "Det kan innebära att du ibland behöver lägga mer medvetenhet på att balansera affärsfokus med omtanke, tydlig riktning och värderingsstyrda beslut i vardagen.",
+    },
+    "Kommunicera precist och tydligt": {
+        "top": "Det innebär att du ofta skapar tydlighet och tillit genom ett klart språk, aktiv dialog och genom att förstärka det som fungerar i samarbeten och beslut.",
+        "low": "Det kan innebära att du ibland behöver vara mer aktiv i att skapa tydlighet, ta dialog i svåra lägen och förankra gemensamma beslut för att minska missförstånd.",
+    },
+    "Bygg och främja en prestationsdriven kultur": {
+        "top": "Det innebär att du ofta driver ansvarstagande och initiativ genom höga förväntningar, transparens och en trygg miljö där olika perspektiv får plats.",
+        "low": "Det kan innebära att du ibland behöver vara tydligare med förväntningar, ansvar och uppföljning för att skapa driv, initiativ och en hållbar prestationskultur.",
+    },
+    "Driva mot måldrivna och ambitiösa mål": {
+        "top": "Det innebär att du ofta skapar engagemang kring tydliga mål, följer upp systematiskt och samarbetar över gränser för att säkra leverans och lönsamhet.",
+        "low": "Det kan innebära att du ibland behöver jobba mer strukturerat med målsättning, uppföljning och samordning för att hålla riktning och få stabil leverans.",
+    },
+    "Rekrytera, utveckla och behåll rätt förmågor och personer": {
+        "top": "Det innebär att du ofta bygger starka team genom att värdera kompetens och kulturmatch, skapa tydlighet och främja lärande så att människor kan växa och bidra.",
+        "low": "Det kan innebära att du ibland behöver lägga mer fokus på att skapa tydlighet, utveckla människor och säkra rätt match mellan roll, kompetens och kultur.",
+    },
+}
+
 
 
 # ─────────────────────────────────────────
@@ -828,6 +851,8 @@ def calculate_b3_underbehaviors_and_clusters(
     top_3_energy = sorted(valid_under, key=lambda u: u["score_5"], reverse=True)[:3]
     bottom_3_energy = sorted(valid_under, key=lambda u: u["score_5"])[:3]
 
+    
+
     def _pick_questions(cluster: Optional[Dict[str, Any]], kind: str) -> List[str]:
         """
         cluster är ett dict från clusters-listan, t.ex:
@@ -839,6 +864,13 @@ def calculate_b3_underbehaviors_and_clusters(
         cluster_name = cluster.get("name")
         return B3_CLUSTER_QUESTIONS.get(cluster_name, {}).get(kind, [])[:3]
 
+    
+
+    def _pick_one_liner(cluster: Optional[Dict[str, Any]], kind: str) -> str:
+        if not cluster:
+            return ""
+        cluster_name = cluster.get("name")
+        return B3_CLUSTER_ONE_LINERS.get(cluster_name, {}).get(kind, "")
 
     insights = {
         "most_natural": most_natural,
@@ -846,11 +878,13 @@ def calculate_b3_underbehaviors_and_clusters(
         "top_energy": top_3_energy,
         "low_energy": bottom_3_energy,
 
-        # ✅ Nya: 3 frågor per "top/lägst"
+        "most_natural_one_liner": _pick_one_liner(most_natural, "top"),
+        "needs_development_one_liner": _pick_one_liner(needs_development, "low"),
+
         "most_natural_questions": _pick_questions(most_natural, "top"),
         "needs_development_questions": _pick_questions(needs_development, "low"),
     }
-
+    
     return underbehaviors, clusters, calc_explain_text, under_compare_rows, cluster_compare_rows, insights
 
 

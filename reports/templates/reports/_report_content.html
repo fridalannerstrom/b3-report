@@ -471,25 +471,22 @@
 
     <!-- 1) Superkort faktabaserad summering -->
     <h3 class="section-title">Sammanfattning av ditt resultat</h3>
-    <p>
-      Din självskattning visar att det ledarbeteende som i nuläget faller dig mest naturligt är
-      <strong>{{ insights.most_natural.title }}</strong>.
-    </p>
-    <p>
-      Resultatet visar samtidigt att <strong>{{ insights.needs_development.title }}</strong> är det ledarbeteende som i nuläget
-      kan kräva mer medvetenhet och energi, beroende på sammanhang och krav i rollen.
-    </p>
+<p>
+  Din självskattning visar att det ledarbeteende som i nuläget faller dig mest naturligt är
+  <strong>{{ insights.most_natural.title }}</strong>.
+  {% if insights.most_natural_one_liner %}
+    {{ insights.most_natural_one_liner }}
+  {% endif %}
+</p>
 
-    <!-- 2) Reflekterande medskick (utan att hitta på) -->
-    <h3 class="section-title">Ett medskick för fortsatt reflektion</h3>
-    <p>
-      De beteenden som faller dig mest naturligt kan ofta användas som en styrka i vardagen och bidra till trygghet och tydlighet
-      i ditt ledarskap. Samtidigt kan de bli så självklara att de sällan ifrågasätts.
-    </p>
-    <p>
-      Resultatet synliggör också vilka beteenden som kan kräva mer medveten anpassning i vissa situationer. Det innebär inte att
-      dessa beteenden är sämre, utan att de kan ta mer energi att använda – särskilt i sammanhang där kraven i rollen förändras.
-    </p>
+<p>
+  Resultatet visar samtidigt att <strong>{{ insights.needs_development.title }}</strong> är det ledarbeteende som i nuläget
+  kan kräva mer medvetenhet och energi, beroende på sammanhang och krav i rollen.
+  {% if insights.needs_development_one_liner %}
+    {{ insights.needs_development_one_liner }}
+  {% endif %}
+</p>
+
 
 <h3 class="section-title">Frågor att ta med dig</h3>
 
