@@ -241,11 +241,6 @@ h1{
   box-shadow: 0 8px 16px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
-/* (valfritt) lite ton i expand-boxen så den känns “kopplad” */
-.mapping-card .ub-expand{
-  border-color: color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,.06));
-}
-
 /* =========================================================
    Koppla mapping-card till dina befintliga data-cluster färger
    (Gör en per huvudbeteende)
@@ -1009,7 +1004,8 @@ h1{
 /* Underbehavior block */
 .ub-block{
   border-top: 1px solid rgba(0,0,0,.06);
-  padding-top: 14px;
+  padding-top: 40px;
+  padding-bottom: 30px;
   margin-top: 14px;
 }
 
@@ -1051,7 +1047,7 @@ h1{
 .ub-expand{
   margin-top: 20px;
   background: #FAF9F8;
-  border: 1px solid rgba(0,0,0,.06);
+  border: 1px solid rgba(0, 0, 0, 0.075);
   border-radius: 12px;
   padding: 20px;
 }
@@ -1078,7 +1074,7 @@ h1{
 
 .comp-item{
   background: #FDFCFC;
-  border: 1px solid rgba(0,0,0,.06);
+  border: 1px solid rgba(0, 0, 0, 0.13);
   border-radius: 10px;
   padding: 20px;
 
@@ -1106,22 +1102,18 @@ h1{
   justify-self: end;
   width: min(230px, 100%);
 }
-
 .comp-bar{
-  position: relative;
   height: 6px;
   border-radius: 999px;
   background: rgba(0,0,0,.10);
   overflow: hidden;
 }
 
-.comp-bar .comp-fill{
-  display: block;
+.comp-fill{
   height: 100%;
-  width: calc((var(--v) / 5) * 100%);
+  display: block;
   background: #028081;
-  border-radius: 999px;
-  box-shadow: 0 8px 16px rgba(2,128,129,.18);
+  border-radius: inherit;
 }
 
 .comp-ticks{

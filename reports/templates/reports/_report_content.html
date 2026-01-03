@@ -1,4 +1,5 @@
 {% load report_extras %}
+
 <!-- Zebra header (upprepas på varje sida i PDF) -->
 <div class="zebra-header" aria-hidden="true"></div>
 
@@ -415,21 +416,27 @@
 
               <div class="comp-list">
                 {% for comp in u.mapped_competencies %}
-                  {% with score=comp.score %}
-                  <div class="comp-item">
-                    <div class="comp-left">
-                      <div class="comp-name">{{ comp.label }}</div>
-                      <div class="comp-desc">{{ comp.description }}</div>
+                {% with score=comp.score %}
+                <div class="comp-item">
+                  <div class="comp-left">
+                    <div class="comp-name">
+                      {{ comp.label }}
+                      {% if comp.score != None %}
+                      <small style="opacity:.7">({{ comp.score|floatformat:6 }})</small>
+                      {% endif %}
                     </div>
-
-                    <div class="comp-right">
-                      <div class="comp-bar" style="--v:{% if score != None %}{{ score }}{% else %}0{% endif %};">
-                        <span class="comp-fill"></span>
-                      </div>
+              
+                    <div class="comp-desc">{{ comp.description }}</div>
+                  </div>
+              
+                  <div class="comp-right">
+                    <div class="comp-bar">
+                      <span class="comp-fill" style="width: {{ comp.pct }}%;"></span>
+                    </div>
 
                       <div class="comp-meta">
                         <div class="comp-ticks">
-                          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                          <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
                         </div>
                       </div>
                     </div>

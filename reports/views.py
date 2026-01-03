@@ -590,18 +590,22 @@ def calculate_b3_underbehaviors_and_clusters(
         # ✅ Detta är NYCKELN: bygg en lista som UI kan loopa över
         # Den innehåller ALLA kompetenser (även de som saknar score => None)
         mapped_competencies: List[Dict[str, Any]] = []
+
         for comp in comps:
             v = _find_score(lookup, comp)
+            ui = COMPETENCY_UI.get(comp, {})
 
-            ui = COMPETENCY_UI.get(comp, {})  # <-- VIKTIGT: definiera ui här
+            score_val = float(v) if v is not None else None
+            pct = (score_val / 5.0) * 100.0 if score_val is not None else 0.0
 
             mapped_competencies.append({
                 "name": comp,
-                "label": ui.get("sv", comp),          # svenska för UI
-                "description": ui.get("desc", ""),    # svensk beskrivning
-                "score": float(v) if v is not None else None,
+                "label": ui.get("sv", comp),
+                "description": ui.get("desc", ""),
+                "score": score_val,
+                "pct": pct,
             })
-
+            
         under_score = _simple_average(comp_values)
 
         under_half = round_to_half(under_score)
@@ -610,6 +614,7 @@ def calculate_b3_underbehaviors_and_clusters(
 
         raw_weight = float(beh.get("weight", 1.0))
         under_weight = 2.0 if raw_weight >= 2.0 else 1.0
+
 
         if comp_debug and under_score is not None:
             left = " + ".join([f'{c["competency"]} {_fmt(c["score"])}' for c in comp_debug])
