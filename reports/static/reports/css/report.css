@@ -364,22 +364,7 @@ h1{
   min-height: 680px;
 }
 
-/* Zebra top stripe */
-.report-surface::before{
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 44px;
-  width: 100%;
 
-  /* Lägg din zebra-bild här (lägg bilden i static/reports/img/...) */
-  background-image: url("../img/zebra-top-140x32-transparent.svg");
-  background-repeat: repeat-x;
-  background-size: auto 100%;
-  opacity: .95;
-  pointer-events: none;
-}
 
 /* Optional: lite “paper inset” känsla */
 .report-surface::after{
