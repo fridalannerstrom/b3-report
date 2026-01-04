@@ -360,7 +360,7 @@ h1{
   border-radius: 22px;
   box-shadow: var(--shadow);
   overflow: hidden;
-  padding: 130px 100px 64px; /* luftigt som en sida */
+  padding: 150px 100px 64px; /* luftigt som en sida */
   min-height: 680px;
 }
 
@@ -428,7 +428,7 @@ h1{
 }
 
 .page-intro{
-  padding-top: 6px;
+  padding-top: 60px;
 }
 
 /* Label (INLEDNING) */
@@ -451,7 +451,7 @@ h1{
   letter-spacing: -0.6px;
   font-weight: 800;
   color: #111;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
 .lead p{
@@ -594,7 +594,7 @@ h1{
   letter-spacing: -0.6px;
   font-weight: 800;
   color: #111;
-  margin-top: 130px !important;
+  margin-top: 0px !important;
 }
 
 .page-subtitle{
@@ -1151,7 +1151,7 @@ body.pdf .container{
 
 /* Tvinga report-surface till desktop padding och typografi */
 body.pdf .report-surface{
-  padding: 130px 100px 64px !important;
+  padding: 200px 100px 64px !important;
 }
 
 body.pdf .report-surface h2{
@@ -1332,6 +1332,31 @@ body.pdf #radarChart {
   }
 }
 
+  .page-spacer-1{
+    height: 50px;   /* hur mycket luft du vill ha */
+  }
+
+  .page-spacer-2{
+    height: 360px;   /* hur mycket luft du vill ha */
+  }
+
+  .page-spacer-3{
+    height: 250px;   /* hur mycket luft du vill ha */
+  }
+
+    .page-spacer-4{
+    height: 70px;   /* hur mycket luft du vill ha */
+  }
+
+  .page-spacer-5{
+    height: 350px;   /* hur mycket luft du vill ha */
+  }
+
+    .page-spacer-6{
+    height: 160px;   /* hur mycket luft du vill ha */
+  }
+
+
 .pdf-download-btn {
   position: fixed;
   bottom: 24px;
@@ -1400,4 +1425,6 @@ body.pdf #radarChart {
     outline: 0 !important;
     box-shadow: none !important;
   }
+
+
 }

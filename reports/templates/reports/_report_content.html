@@ -8,6 +8,7 @@
      <div class="big-box"></div>
 
 <section class="page page-intro">
+  <div class="page-spacer-1" aria-hidden="true"></div>
   <div class="section-label">INLEDNING</div>
 
   <h2 class="page-title">Om självskattning och naturligt beteende</h2>
@@ -126,7 +127,7 @@
 
 
 <section class="page page-overview">
-
+<div class="page-spacer-2" aria-hidden="true"></div>
   <header class="page-header center">
     <h2 class="page-title-xl">Översikt över dina<br>ledarskapsbeteenden</h2>
     <p class="page-subtitle">
@@ -250,13 +251,14 @@
 
 <!-- B3 RESULTAT -->
 <section class="page page-results">
-
+  <div class="page-spacer-3" aria-hidden="true"></div>
   <header class="page-header center">
     <h2 class="page-title-xl">Resultat på B3:s<br>ledarskapsbeteenden</h2>
     <p class="page-subtitle">
       Resultaten visas på en femgradig skala (1–5) där varje ledarbeteende <br>presenteras tillsammans med tillhörande beteenden som praktiseras i vardagen.
     </p>
   </header>
+  <div class="page-spacer-4" aria-hidden="true"></div>
 
 {% for cluster in b3_clusters %}
 <article class="result-card" data-cluster="{{ cluster.title|slugify }}">
@@ -325,6 +327,16 @@
   </div>
 
 </article>
+
+  {% if forloop.counter == 1 %}
+    <div class="page-spacer-5" aria-hidden="true"></div>
+  {% endif %}
+
+  {% if forloop.counter == 3 %}
+    <div class="page-spacer-6" aria-hidden="true"></div>
+  {% endif %}
+
+
 {% endfor %}
 
 
