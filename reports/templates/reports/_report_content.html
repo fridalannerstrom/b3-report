@@ -343,7 +343,7 @@
 </section>
 
 <section class="page page-mapping page-intro">
-
+<div class="page-spacer-7" aria-hidden="true"></div>
   <header class="page-header">
     <div class="section-label">VISUELL MAPPNING</div>
     <h2 class="page-title-xl no-margin">Inledning till visuell översikt av mappning och kompetensresultat</h2>
@@ -371,7 +371,7 @@
       </p>
   </header>
 
-
+<div class="page-spacer-8" aria-hidden="true"></div>
 {% for cluster in b3_clusters %}
 <article class="mapping-card"
   {% if cluster.name == "Affärs- och värderingsdrivet ledarskap" %}
@@ -459,13 +459,24 @@
               </div>
             </div>
 
+
           </div>
 
+                  {% if u.name == "Jag driver försäljning och bygger långsiktiga kundrelationer" %}
+<div class="page-spacer-9" aria-hidden="true"></div>
+{% endif %}
+
+                  {% if u.name == "Jag lyfter och bekräftar medarbetare för att skapa engagemang och tillit" %}
+<div class="page-spacer-10" aria-hidden="true"></div>
+{% endif %}
+
         {% endif %}
+
       {% endfor %}
 
     </div>
   </article>
+
 {% endfor %}
 
 

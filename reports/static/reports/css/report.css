@@ -222,7 +222,7 @@ h1{
 
 /* Headern (färgbandet) */
 .mapping-card .mapping-card__header{
-  background: var(--accent) !important;
+  color: black;
 }
 
 /* "Ditt resultat" prickar */
@@ -953,7 +953,6 @@ h1{
 
 .page-mapping .page-header{
   margin-bottom: 18px;
-  margin-top: 130px;
 }
 
 .no-margin {
@@ -961,44 +960,29 @@ h1{
 }
 
 .mapping-card{
-  background: rgb(255, 255, 255);
-  border: 1px solid rgba(0,0,0,.08);
-  border-radius: 18px;
-  overflow: hidden;
-  margin: 50px 0;
 }
 
-.mapping-card__header{
-  background: #028081;
-  padding: 14px 16px;
-}
 
 .mapping-card__title{
   margin: 0;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
+  color: #000000;
+  font-size: 25px;
+  font-weight: 800;
   letter-spacing: -0.1px;
-  padding: 5px 10px;
-}
-
-.mapping-card__body{
-  padding: 40px 30px;
+  margin-bottom: 20px;
 }
 
 /* Underbehavior block */
 .ub-block{
-  border-top: 1px solid rgba(0,0,0,.06);
-  padding-top: 40px;
-  padding-bottom: 30px;
-  margin-top: 14px;
+  background: rgba(255, 255, 255, 0.315);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 30px;
+  margin: 40px 0;
+
 }
 
-.ub-block:first-child{
-  border-top: 0;
-  padding-top: 0;
-  margin-top: 0;
-}
 
 /* top row */
 .ub-row{
@@ -1012,7 +996,8 @@ h1{
   font-size: 14px;
   line-height: 1.35;
   color: rgba(0,0,0,.78);
-  font-weight: 700;
+  font-weight: 600;
+  margin-top: 10px;
 }
 
 .ub-right{
@@ -1355,6 +1340,26 @@ body.pdf #radarChart {
     .page-spacer-6{
     height: 160px;   /* hur mycket luft du vill ha */
   }
+
+  .page-spacer-7{
+    height: 130px;   /* hur mycket luft du vill ha */
+  }
+
+  .page-spacer-8{
+    height: 30px;   /* hur mycket luft du vill ha */
+  }
+
+  .page-spacer-9{
+    height: 160px;   /* hur mycket luft du vill ha */
+
+  }
+
+   .page-spacer-10{
+    height: 230px;   /* hur mycket luft du vill ha */
+  }
+
+
+
 
 
 .pdf-download-btn {
