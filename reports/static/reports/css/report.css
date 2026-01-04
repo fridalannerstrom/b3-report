@@ -1224,6 +1224,8 @@ body.pdf #radarChart {
   margin: 6px 0;
 }
 
+
+
 .page-closing .closing-final-box{
   margin-top: 50px;
   padding: 0px 100px 50px;
@@ -1345,3 +1347,20 @@ body.pdf #radarChart {
   }
 }
 
+.pdf-download-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  background-color: #028081;
+  padding: 12px 18px;
+  border-radius: 999px;
+  color: white;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.pdf-download-btn:hover {
+  background-color: #015858;
+  color: white;
+}
