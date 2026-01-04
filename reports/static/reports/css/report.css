@@ -1354,9 +1354,19 @@ body.pdf #radarChart {
 
   }
 
-   .page-spacer-10{
-    height: 230px;   /* hur mycket luft du vill ha */
+   .page-spacer-10 {
+    height: 200px;   /* hur mycket luft du vill ha */
   }
+
+  .page-spacer-11 {
+    height: 50px;   /* hur mycket luft du vill ha */
+  }
+
+    .page-spacer-12 {
+    height: 200px;   /* hur mycket luft du vill ha */
+    border: 1px solid red;
+  }
+
 
 
 
