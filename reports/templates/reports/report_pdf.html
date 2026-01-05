@@ -39,329 +39,349 @@
      - Procent-badges ovanför varje prick
      - Stora “double-ring” prickar (som din bild)
      - Inga hover/tooltips, animation av
--->
-<script>
+--><script>
 (function () {
-  const elLabels = document.getElementById("radar-labels");
-  const elValues = document.getElementById("radar-values");
-  const canvas   = document.getElementById("radarChart");
-  if (!elLabels || !elValues || !canvas || !window.Chart) return;
+  // ✅ Playwright väntar på detta. Sätt alltid default.
+  window.__RADAR_READY__ = false;
 
-  const labels = JSON.parse(elLabels.textContent || "[]");
-  const values = JSON.parse(elValues.textContent || "[]"); // 0–100
-  const ctx = canvas.getContext("2d");
+  try {
+    const elLabels = document.getElementById("radar-labels");
+    const elValues = document.getElementById("radar-values");
+    const canvas   = document.getElementById("radarChart");
 
-  const pointColors = labels.map(l => {
-  const s = (l || "").toLowerCase();
+    // ✅ Om radar inte finns på sidan: blockera inte PDF
+    if (!elLabels || !elValues || !canvas || !window.Chart) {
+      window.__RADAR_READY__ = true;
+      return;
+    }
 
-  if (s.includes("affär") || s.includes("affars")) return "#42BBC1";
-  if (s.includes("kommunicera")) return "#F0BD47";
-  if (s.includes("bygg")) return "#426DAA";
-  if (s.includes("driva")) return "#DF668A";
-  if (s.includes("rekrytera")) return "#9D9D9C";
+    // ✅ Safety: om något går snett ändå, låt PDF fortsätta
+    setTimeout(() => { window.__RADAR_READY__ = true; }, 7000);
 
-  return "#028081"; // fallback
-});
+    const labels = JSON.parse(elLabels.textContent || "[]");
+    const values = JSON.parse(elValues.textContent || "[]"); // 0–100
+    const ctx = canvas.getContext("2d");
 
-  // -----------------------------
-  // Global defaults (canvas text)
-  // -----------------------------
-  Chart.defaults.font.family = "'Work Sans', sans-serif";
-  Chart.defaults.color = "#222";
+    const pointColors = labels.map(l => {
+      const s = (l || "").toLowerCase();
 
-  // -----------------------------
-  // Label wrapping (2–3 rader snyggt)
-  // -----------------------------
-  function wrapLabel(label, maxChars = 18) {
-    const words = (label || "").split(" ");
-    const lines = [];
-    let current = "";
-    words.forEach(word => {
-      const next = current ? (current + " " + word) : word;
-      if (next.length <= maxChars) current = next;
-      else { if (current) lines.push(current); current = word; }
+      if (s.includes("affär") || s.includes("affars")) return "#42BBC1";
+      if (s.includes("kommunicera")) return "#F0BD47";
+      if (s.includes("bygg")) return "#426DAA";
+      if (s.includes("driva")) return "#DF668A";
+      if (s.includes("rekrytera")) return "#9D9D9C";
+
+      return "#028081"; // fallback
     });
-    if (current) lines.push(current);
-    return lines;
-  }
-  const wrappedLabels = labels.map(l => wrapLabel(l, 18));
 
-  // -----------------------------
-  // Helpers: rounded rect (badge)
-  // -----------------------------
-  function roundRect(ctx, x, y, w, h, r) {
-    const radius = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.arcTo(x + w, y, x + w, y + h, radius);
-    ctx.arcTo(x + w, y + h, x, y + h, radius);
-    ctx.arcTo(x, y + h, x, y, radius);
-    ctx.arcTo(x, y, x + w, y, radius);
-    ctx.closePath();
-  }
+    // -----------------------------
+    // Global defaults (canvas text)
+    // -----------------------------
+    Chart.defaults.font.family = "'Work Sans', sans-serif";
+    Chart.defaults.color = "#222";
 
-  // -----------------------------
-  // Helpers: rounded polygon path
-  // (för rundade hörn i grid-ringen)
-  // -----------------------------
-  function roundedPolygonPath(ctx, points, cornerRadius) {
-    const n = points.length;
-    if (n < 3) return;
-
-    ctx.beginPath();
-
-    for (let i = 0; i < n; i++) {
-      const p0 = points[(i - 1 + n) % n];
-      const p1 = points[i];
-      const p2 = points[(i + 1) % n];
-
-      const v1x = p0.x - p1.x;
-      const v1y = p0.y - p1.y;
-      const v2x = p2.x - p1.x;
-      const v2y = p2.y - p1.y;
-
-      const len1 = Math.hypot(v1x, v1y);
-      const len2 = Math.hypot(v2x, v2y);
-      if (!len1 || !len2) continue;
-
-      const r = Math.min(cornerRadius, len1 * 0.25, len2 * 0.25);
-
-      const u1x = v1x / len1, u1y = v1y / len1;
-      const u2x = v2x / len2, u2y = v2y / len2;
-
-      const startX = p1.x + u1x * r;
-      const startY = p1.y + u1y * r;
-      const endX   = p1.x + u2x * r;
-      const endY   = p1.y + u2y * r;
-
-      if (i === 0) ctx.moveTo(startX, startY);
-      else ctx.lineTo(startX, startY);
-
-      ctx.quadraticCurveTo(p1.x, p1.y, endX, endY);
-    }
-
-    ctx.closePath();
-  }
-
-  // -----------------------------
-  // Plugin: rounded polygon grid rings
-  // -----------------------------
-  const roundedRadarGrid = {
-    id: "roundedRadarGrid",
-    beforeDatasetsDraw(chart, args, opts) {
-      const scale = chart.scales.r;
-      if (!scale) return;
-
-      const ctx = chart.ctx;
-      ctx.save();
-
-      const steps = (opts && opts.steps) ? opts.steps : [20, 40, 60, 80, 100];
-      const cornerRadius = (opts && typeof opts.cornerRadius === "number") ? opts.cornerRadius : 14;
-      const stroke = (opts && opts.stroke) ? opts.stroke : "rgba(0,0,0,0.10)";
-      const lineWidth = (opts && typeof opts.lineWidth === "number") ? opts.lineWidth : 1;
-
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = lineWidth;
-
-      steps.forEach(v => {
-        const pts = [];
-        const labelCount = (scale._pointLabels || []).length;
-        for (let i = 0; i < labelCount; i++) {
-          const p = scale.getPointPositionForValue(i, v);
-          pts.push({ x: p.x, y: p.y });
-        }
-        if (pts.length >= 3) {
-          roundedPolygonPath(ctx, pts, cornerRadius);
-          ctx.stroke();
-        }
+    // -----------------------------
+    // Label wrapping (2–3 rader snyggt)
+    // -----------------------------
+    function wrapLabel(label, maxChars = 18) {
+      const words = (label || "").split(" ");
+      const lines = [];
+      let current = "";
+      words.forEach(word => {
+        const next = current ? (current + " " + word) : word;
+        if (next.length <= maxChars) current = next;
+        else { if (current) lines.push(current); current = word; }
       });
-
-      ctx.restore();
+      if (current) lines.push(current);
+      return lines;
     }
-  };
+    const wrappedLabels = labels.map(l => wrapLabel(l, 18));
 
-  // -----------------------------
-  // Plugin: custom points + badges above points
-  // -----------------------------
-  const pointBadgesAndPoints = {
-    id: "pointBadgesAndPoints",
-    afterDatasetsDraw(chart) {
-      const meta = chart.getDatasetMeta(0);
-      if (!meta || !meta.data) return;
-
-      const { ctx } = chart;
-      const data = chart.data.datasets[0].data || [];
-
-      ctx.save();
-
-      // ✅ Prick-styling (justera här)
-      const ringFill   = "#ffffff";
-      const ringStroke = "rgba(0,0,0,0.10)";
-      const fallbackDotColor = "#028081";
-      const ringRadius = 11;   // yttre ring (större = tydligare)
-      const dotRadius  = 6;    // inre dot
-      const ringWidth  = 1.2;
-
-      // ✅ Badge styling
-      ctx.font = "700 10px 'Work Sans', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      const padX = 8;
-      const badgeH = 18;
-      const badgeR = 6;
-      const badgeGap = 6; // avstånd från ring till badge
-
-      meta.data.forEach((pt, i) => {
-        const v = data[i];
-        if (v == null) return;
-
-        const x = pt.x;
-        const y = pt.y;
-
-        const dotColor = pointColors[i] || fallbackDotColor;
-
-        // ring
-        ctx.beginPath();
-        ctx.arc(x, y, ringRadius, 0, Math.PI * 2);
-        ctx.fillStyle = ringFill;
-        ctx.fill();
-        ctx.lineWidth = ringWidth;
-        ctx.strokeStyle = ringStroke;
-        ctx.stroke();
-
-        // dot
-        ctx.beginPath();
-        ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
-        ctx.fillStyle = dotColor;
-        ctx.fill();
-
-        // badge above
-        const text = `${Math.round(Number(v))}%`;
-        const textW = ctx.measureText(text).width;
-        const badgeW = textW + padX * 2;
-
-        const bx = x - badgeW / 2;
-        const by = y - ringRadius - badgeGap - badgeH;
-
-        ctx.fillStyle = "rgba(255,255,255,0.97)";
-        ctx.strokeStyle = "rgba(0,0,0,0.10)";
-        ctx.lineWidth = 1;
-
-        roundRect(ctx, bx, by, badgeW, badgeH, badgeR);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#111";
-        ctx.fillText(text, x, by + badgeH / 2);
-      });
-
-      ctx.restore();
-    }
-  };
-
-  // -----------------------------
-  // Register plugins ONCE
-  // -----------------------------
-  if (!Chart._b3RadarPluginsRegistered) {
-    Chart.register(roundedRadarGrid, pointBadgesAndPoints);
-    Chart._b3RadarPluginsRegistered = true;
-  }
-
-  // -----------------------------
-  // PDF-safe sizing: match wrapper
-  // -----------------------------
-  function sizeCanvasFromWrapper() {
-    const wrapper = canvas.parentElement;
-    if (!wrapper) return;
-
-    const rect = wrapper.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-
-    // CSS size
-    canvas.style.width = rect.width + "px";
-    canvas.style.height = rect.height + "px";
-
-    // Backing store
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-
-    // Reset scale so drawings aren't blurry
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  // -----------------------------
-  // Build chart AFTER fonts are ready
-  // -----------------------------
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
-    sizeCanvasFromWrapper();
-
-    // Destroy old if rerender
-    if (window.radarChart && typeof window.radarChart.destroy === "function") {
-      window.radarChart.destroy();
+    // -----------------------------
+    // Helpers: rounded rect (badge)
+    // -----------------------------
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.arcTo(x + w, y, x + w, y + h, radius);
+      ctx.arcTo(x + w, y + h, x, y + h, radius);
+      ctx.arcTo(x, y + h, x, y, radius);
+      ctx.arcTo(x, y, x + w, y, radius);
+      ctx.closePath();
     }
 
-    window.radarChart = new Chart(ctx, {
-      type: "radar",
-      data: {
-        labels: wrappedLabels,
-        datasets: [{
-          data: values,
-          borderColor: "#028081",
-          backgroundColor: "rgba(2, 128, 129, 0.14)",
-          borderWidth: 2.6,
-          fill: true,
+    // -----------------------------
+    // Helpers: rounded polygon path
+    // -----------------------------
+    function roundedPolygonPath(ctx, points, cornerRadius) {
+      const n = points.length;
+      if (n < 3) return;
 
-          // default points OFF (we draw our own)
-          pointRadius: 0,
-          pointHoverRadius: 0,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false },
+      ctx.beginPath();
 
-          // plugin options
-          roundedRadarGrid: {
-            steps: [20, 40, 60, 80, 100],
-            cornerRadius: 16,
-            stroke: "rgba(0,0,0,0.10)",
-            lineWidth: 1
+      for (let i = 0; i < n; i++) {
+        const p0 = points[(i - 1 + n) % n];
+        const p1 = points[i];
+        const p2 = points[(i + 1) % n];
+
+        const v1x = p0.x - p1.x;
+        const v1y = p0.y - p1.y;
+        const v2x = p2.x - p1.x;
+        const v2y = p2.y - p1.y;
+
+        const len1 = Math.hypot(v1x, v1y);
+        const len2 = Math.hypot(v2x, v2y);
+        if (!len1 || !len2) continue;
+
+        const r = Math.min(cornerRadius, len1 * 0.25, len2 * 0.25);
+
+        const u1x = v1x / len1, u1y = v1y / len1;
+        const u2x = v2x / len2, u2y = v2y / len2;
+
+        const startX = p1.x + u1x * r;
+        const startY = p1.y + u1y * r;
+        const endX   = p1.x + u2x * r;
+        const endY   = p1.y + u2y * r;
+
+        if (i === 0) ctx.moveTo(startX, startY);
+        else ctx.lineTo(startX, startY);
+
+        ctx.quadraticCurveTo(p1.x, p1.y, endX, endY);
+      }
+
+      ctx.closePath();
+    }
+
+    // -----------------------------
+    // Plugin: rounded polygon grid rings
+    // -----------------------------
+    const roundedRadarGrid = {
+      id: "roundedRadarGrid",
+      beforeDatasetsDraw(chart, args, opts) {
+        const scale = chart.scales.r;
+        if (!scale) return;
+
+        const ctx = chart.ctx;
+        ctx.save();
+
+        const steps = (opts && opts.steps) ? opts.steps : [20, 40, 60, 80, 100];
+        const cornerRadius = (opts && typeof opts.cornerRadius === "number") ? opts.cornerRadius : 14;
+        const stroke = (opts && opts.stroke) ? opts.stroke : "rgba(0,0,0,0.10)";
+        const lineWidth = (opts && typeof opts.lineWidth === "number") ? opts.lineWidth : 1;
+
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = lineWidth;
+
+        steps.forEach(v => {
+          const pts = [];
+          const labelCount = (scale._pointLabels || []).length;
+          for (let i = 0; i < labelCount; i++) {
+            const p = scale.getPointPositionForValue(i, v);
+            pts.push({ x: p.x, y: p.y });
           }
+          if (pts.length >= 3) {
+            roundedPolygonPath(ctx, pts, cornerRadius);
+            ctx.stroke();
+          }
+        });
+
+        ctx.restore();
+      }
+    };
+
+    // -----------------------------
+    // Plugin: custom points + badges above points
+    // -----------------------------
+    const pointBadgesAndPoints = {
+      id: "pointBadgesAndPoints",
+      afterDatasetsDraw(chart) {
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data) return;
+
+        const { ctx } = chart;
+        const data = chart.data.datasets[0].data || [];
+
+        ctx.save();
+
+        const ringFill   = "#ffffff";
+        const ringStroke = "rgba(0,0,0,0.10)";
+        const fallbackDotColor = "#028081";
+        const ringRadius = 11;
+        const dotRadius  = 6;
+        const ringWidth  = 1.2;
+
+        ctx.font = "700 10px 'Work Sans', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        const padX = 8;
+        const badgeH = 18;
+        const badgeR = 6;
+        const badgeGap = 6;
+
+        meta.data.forEach((pt, i) => {
+          const v = data[i];
+          if (v == null) return;
+
+          const x = pt.x;
+          const y = pt.y;
+
+          const dotColor = pointColors[i] || fallbackDotColor;
+
+          // ring
+          ctx.beginPath();
+          ctx.arc(x, y, ringRadius, 0, Math.PI * 2);
+          ctx.fillStyle = ringFill;
+          ctx.fill();
+          ctx.lineWidth = ringWidth;
+          ctx.strokeStyle = ringStroke;
+          ctx.stroke();
+
+          // dot
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = dotColor;
+          ctx.fill();
+
+          // badge
+          const text = `${Math.round(Number(v))}%`;
+          const textW = ctx.measureText(text).width;
+          const badgeW = textW + padX * 2;
+
+          const bx = x - badgeW / 2;
+          const by = y - ringRadius - badgeGap - badgeH;
+
+          ctx.fillStyle = "rgba(255,255,255,0.97)";
+          ctx.strokeStyle = "rgba(0,0,0,0.10)";
+          ctx.lineWidth = 1;
+
+          roundRect(ctx, bx, by, badgeW, badgeH, badgeR);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#111";
+          ctx.fillText(text, x, by + badgeH / 2);
+        });
+
+        ctx.restore();
+      }
+    };
+
+    // -----------------------------
+    // Register plugins ONCE
+    // -----------------------------
+    if (!Chart._b3RadarPluginsRegistered) {
+      Chart.register(roundedRadarGrid, pointBadgesAndPoints);
+      Chart._b3RadarPluginsRegistered = true;
+    }
+
+    // -----------------------------
+    // PDF-safe sizing
+    // -----------------------------
+    function getDprForExport() {
+      const isPdf = document.body.classList.contains("pdf");
+      const isPrint = window.matchMedia && window.matchMedia("print").matches;
+      if (isPdf || isPrint) return 3; // prova 2 om det blir tungt
+      return window.devicePixelRatio || 1;
+    }
+
+    function sizeCanvasFromWrapper() {
+      const wrapper = canvas.parentElement;
+      if (!wrapper) return;
+
+      const rect = wrapper.getBoundingClientRect();
+      const dpr = getDprForExport(); // ✅ FIX: dpr måste definieras här
+
+      // CSS size
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
+
+      // Backing store
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+
+      // Reset scale so drawings aren't blurry
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    // -----------------------------
+    // Build chart AFTER fonts + layout are ready
+    // -----------------------------
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(async () => {
+      // ✅ Vänta 2 frames så wrappern får rätt storlek (viktigt för PDF)
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      sizeCanvasFromWrapper();
+
+      if (window.radarChart && typeof window.radarChart.destroy === "function") {
+        window.radarChart.destroy();
+      }
+
+      window.radarChart = new Chart(ctx, {
+        type: "radar",
+        data: {
+          labels: wrappedLabels,
+          datasets: [{
+            data: values,
+            borderColor: "#028081",
+            backgroundColor: "rgba(2, 128, 129, 0.14)",
+            borderWidth: 2.6,
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+          }]
         },
-        scales: {
-          r: {
-            min: 0,
-            max: 100,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
 
-            // hide default rings (we draw our own)
-            grid: { circular: false, color: "rgba(0,0,0,0)" },
+          // ✅ Vi sköter DPR själva via canvas.width/height
+          devicePixelRatio: 1,
 
-            angleLines: { color: "rgba(0,0,0,0.06)" },
-
-            // ✅ hide tick numbers 20/40/60...
-            ticks: { display: false },
-
-            pointLabels: {
-              font: { family: "'Work Sans', sans-serif", size: 13, weight: "700" },
-              color: "#222",
-              padding: 22,
-              lineHeight: 1.2
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
+            roundedRadarGrid: {
+              steps: [20, 40, 60, 80, 100],
+              cornerRadius: 16,
+              stroke: "rgba(0,0,0,0.10)",
+              lineWidth: 1
+            }
+          },
+          scales: {
+            r: {
+              min: 0,
+              max: 100,
+              grid: { circular: false, color: "rgba(0,0,0,0)" },
+              angleLines: { color: "rgba(0,0,0,0.06)" },
+              ticks: { display: false },
+              pointLabels: {
+                font: { family: "'Work Sans', sans-serif", size: 13, weight: "700" },
+                color: "#222",
+                padding: 22,
+                lineHeight: 1.2
+              }
             }
           }
         }
-      }
+      });
+
+      // ✅ extra safety
+      window.radarChart.resize();
+
+      // ✅ Viktigt för Playwright
+      window.__RADAR_READY__ = true;
+    }).catch((e) => {
+      console.error("Radar fonts/layout wait failed:", e);
+      window.__RADAR_READY__ = true;
     });
 
-    // extra safety: ensure final sizing
-    window.radarChart.resize();
-
+  } catch (e) {
+    console.error("Radar init failed:", e);
     window.__RADAR_READY__ = true;
-  });
+  }
 })();
 </script>
 
