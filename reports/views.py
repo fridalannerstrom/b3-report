@@ -432,10 +432,10 @@ B3_CLUSTER_QUESTIONS = {
     "top": [
       "Hur sätter du förväntningar som skapar ansvar och framdrift utan att skapa otrygghet?",
       "Hur bygger du team utifrån både kompetens och kulturmatch i praktiken?",
-      "Vad gör du för att skapa en miljö där olika perspektiv faktiskt får utrymme?"
+      "Vad gör du för att skapa en trygg miljö där olika perspektiv faktiskt får utrymme?"
     ],
     "low": [
-      "Var brister det oftast: förväntningar, ansvar, initiativ eller tydlighet i beslut?",
+      "Var brister tydliggörandet oftast: vid förväntningar, uppmuntran till ansvarstagande och initiativ eller tydlighet vid beslut? ",
       "Vilket beteende från dig skulle mest bidra till mer transparens och trygghet i teamet?",
       "Vilket litet initiativ kan du ta för att stärka ansvarstagande och initiativ i gruppen kommande vecka?"
     ],
@@ -456,13 +456,13 @@ B3_CLUSTER_QUESTIONS = {
 
   "Rekrytera, utveckla och behålla rätt förmågor och personer": {
     "top": [
-      "Hur fångar du både kompetens, kulturmatch och utvecklingsvilja när du bedömer människor?",
+      "Hur fångar du både kompetens, kulturmatch och utvecklingsvilja i en rekrytering? ",
       "Hur skapar du tydliga förväntningar som hjälper andra att växa?",
       "Hur bidrar du till en inkluderande lärandekultur i vardagen?"
     ],
     "low": [
-      "Var uppstår störst osäkerhet: kravprofil, förväntningar, utveckling eller att fatta svåra beslut?",
-      "Hur tydlig är du i roller och förväntningar, och vad skulle göra det tydligare?",
+      "Var uppstår störst osäkerhet: vid rekrytering, förväntningar, utveckling eller att fatta svåra beslut? ",
+      "Hur tydlig är du i rollers förväntningar, och vad skulle göra det tydligare? ",
       "Vilken konkret insats kan du göra för att stärka lärande och utveckling i teamet den här månaden?"
     ],
   },
@@ -470,24 +470,24 @@ B3_CLUSTER_QUESTIONS = {
 
 B3_CLUSTER_ONE_LINERS = {
     "Affärs- och värderingsdrivet ledarskap": {
-        "top": "Det innebär att du ofta leder med både kundvärde och omtanke i fokus, tar ansvar för helheten och skapar trygghet genom tydlighet och värderingsstyrda beslut.",
+        "top": "Det innebär troligen att du ofta leder med både kundvärde och omtanke i fokus, tar ansvar för helheten och skapar trygghet genom tydlighet och värderingsstyrda beslut.",
         "low": "Det kan innebära att du ibland behöver lägga mer medvetenhet på att balansera affärsfokus med omtanke, tydlig riktning och värderingsstyrda beslut i vardagen.",
     },
     "Kommunicera precist och tydligt": {
-        "top": "Det innebär att du ofta skapar tydlighet och tillit genom ett klart språk, aktiv dialog och genom att förstärka det som fungerar i samarbeten och beslut.",
-        "low": "Det kan innebära att du ibland behöver vara mer aktiv i att skapa tydlighet, ta dialog i svåra lägen och förankra gemensamma beslut för att minska missförstånd.",
+        "top": "Det innebär troligen att du ofta skapar tydlighet och tillit genom ett klart språk, medveten dialog och genom att förstärka det som fungerar i samarbeten och beslut, samt genom att våga ta dialog även när samtalen är svåra.",
+        "low": "Det kan innebära att du ibland behöver vara mer medveten i att skapa tydlighet, ta dialog i svåra lägen och förankra gemensamma beslut för att minska missförstånd.",
     },
     "Bygg och främja en prestationsdriven kultur": {
-        "top": "Det innebär att du ofta driver ansvarstagande och initiativ genom höga förväntningar, transparens och en trygg miljö där olika perspektiv får plats.",
-        "low": "Det kan innebära att du ibland behöver vara tydligare med förväntningar, ansvar och uppföljning för att skapa driv, initiativ och en hållbar prestationskultur.",
+        "top": "Det innebär troligen att du ofta driver ansvarstagande och initiativ genom höga förväntningar, transparens och en trygg miljö där olika perspektiv får plats.",
+        "low": "Det kan innebära att du ibland behöver vara tydligare med förväntningar, uppmuntra ansvarstagande och uppföljning i större utsträckning för att skapa driv, initiativ och en hållbar prestationskultur.",
     },
     "Driva mot måldrivna och ambitiösa mål": {
-        "top": "Det innebär att du ofta skapar engagemang kring tydliga mål, följer upp systematiskt och samarbetar över gränser för att säkra leverans och lönsamhet.",
-        "low": "Det kan innebära att du ibland behöver jobba mer strukturerat med målsättning, uppföljning och samordning för att hålla riktning och få stabil leverans.",
+        "top": "Det innebär troligen att du ofta skapar engagemang kring tydliga mål, följer upp systematiskt och samarbetar över gränser för att säkra leverans och lönsamhet.",
+        "low": "Det kan innebära att du ibland behöver jobba mer strukturerat med målsättning, uppföljning och samordning för att för att säkra leverans och lönsamhet.",
     },
     "Rekrytera, utveckla och behåll rätt förmågor och personer": {
-        "top": "Det innebär att du ofta bygger starka team genom att värdera kompetens och kulturmatch, skapa tydlighet och främja lärande så att människor kan växa och bidra.",
-        "low": "Det kan innebära att du ibland behöver lägga mer fokus på att skapa tydlighet, utveckla människor och säkra rätt match mellan roll, kompetens och kultur.",
+        "top": "Det innebär troligen att du ofta bygger starka team genom att värdera kompetens och kulturmatch, skapa tydlighet och främja lärande så att människor kan växa och bidra.",
+        "low": "Det kan innebära att du ibland behöver lägga mer fokus på att skapa tydlighet i rollen, utveckla människor och säkra rätt match mellan roll, kompetens och kultur. ",
     },
 }
 
