@@ -84,7 +84,23 @@
   const values = JSON.parse(elValues.textContent || "[]"); // 0–100
   const ctx = canvas.getContext("2d");
 
-  const pointColors = labels.map(l => {
+  // =========================================================
+  // BYT NAMN ENDAST I SPINDELDIAGRAMMET (utan att röra backend)
+  // =========================================================
+  const labelMap = {
+    // Originalet som kommer från backend/JSON:
+    "Driva mot måldrivna och ambitiösa mål": "Driva mot ambitiösa och mätbara resultatmål"
+    // Exempel:
+    // "Driva mot måldrivna och ambitiösa mål": "Driva mot ambitiösa och mätbara resultatmål"
+  };
+
+  // Robust: trim + normalisera mellanslag innan matchning
+  const displayLabels = labels.map(l => {
+    const key = (l || "").trim().replace(/\s+/g, " ");
+    return labelMap[key] || l;
+  });
+
+  const pointColors = displayLabels.map(l => {
     const s = (l || "").toLowerCase();
     if (s.includes("affär") || s.includes("affars")) return "#42BBC1";
     if (s.includes("kommunicera")) return "#F0BD47";
@@ -115,7 +131,7 @@
     if (current) lines.push(current);
     return lines;
   }
-  const wrappedLabels = labels.map(l => wrapLabel(l, 18));
+  const wrappedLabels = displayLabels.map(l => wrapLabel(l, 18));
 
   // -----------------------------
   // Helpers: rounded rect (badge)
@@ -302,96 +318,96 @@
   }
 
   function getExportDpr() {
-  // 2 = ofta tillräckligt, 3 = superskarpt, 4 = kan bli tungt
-  // Vill du att WEBB också ska se lika skarp ut: kör 3 här alltid.
-  return 3;
-}
+    // 2 = ofta tillräckligt, 3 = superskarpt, 4 = kan bli tungt
+    // Vill du att WEBB också ska se lika skarp ut: kör 3 här alltid.
+    return 3;
+  }
 
-function sizeCanvasFromWrapper() {
-  const wrapper = canvas.parentElement; // din .radar-inner
-  if (!wrapper) return;
+  function sizeCanvasFromWrapper() {
+    const wrapper = canvas.parentElement; // din .radar-inner
+    if (!wrapper) return;
 
-  const rect = wrapper.getBoundingClientRect();
-  const dpr = getExportDpr();
+    const rect = wrapper.getBoundingClientRect();
+    const dpr = getExportDpr();
 
-  // 1) CSS-storlek (layout) – lämnas som den är
-  canvas.style.width = rect.width + "px";
-  canvas.style.height = rect.height + "px";
+    // 1) CSS-storlek (layout) – lämnas som den är
+    canvas.style.width = rect.width + "px";
+    canvas.style.height = rect.height + "px";
 
-  // 2) Backing store (pixlar) – görs större för skärpa
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
+    // 2) Backing store (pixlar) – görs större för skärpa
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
 
-  // 3) Nollställ transform och skala upp ritningen
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+    // 3) Nollställ transform och skala upp ritningen
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
 
   // -----------------------------
   // Build chart AFTER fonts + layout
   // -----------------------------
- (document.fonts ? document.fonts.ready : Promise.resolve()).then(async () => {
-  // Vänta 2 frames så layouten hinner sätta rätt storlek
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(async () => {
+    // Vänta 2 frames så layouten hinner sätta rätt storlek
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-  sizeCanvasFromWrapper();
+    sizeCanvasFromWrapper();
 
-  if (window.radarChart && typeof window.radarChart.destroy === "function") {
-    window.radarChart.destroy();
-  }
+    if (window.radarChart && typeof window.radarChart.destroy === "function") {
+      window.radarChart.destroy();
+    }
 
-  window.radarChart = new Chart(ctx, {
-    type: "radar",
-    data: {
-      labels: wrappedLabels,
-      datasets: [{
-        data: values,
-        borderColor: "#028081",
-        backgroundColor: "rgba(2, 128, 129, 0.14)",
-        borderWidth: 2.6,
-        fill: true,
-        pointRadius: 0,
-        pointHoverRadius: 0,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-
-      // VIKTIGT: vi skalar canvas själva
-      devicePixelRatio: 1,
-
-      plugins: {
-        legend: { display: false },
-        tooltip: { enabled: false },
-        roundedRadarGrid: {
-          steps: [20, 40, 60, 80, 100],
-          cornerRadius: 16,
-          stroke: "rgba(0,0,0,0.10)",
-          lineWidth: 1
-        }
+    window.radarChart = new Chart(ctx, {
+      type: "radar",
+      data: {
+        labels: wrappedLabels,
+        datasets: [{
+          data: values,
+          borderColor: "#028081",
+          backgroundColor: "rgba(2, 128, 129, 0.14)",
+          borderWidth: 2.6,
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+        }]
       },
-      scales: {
-        r: {
-          min: 0,
-          max: 100,
-          grid: { circular: false, color: "rgba(0,0,0,0)" },
-          angleLines: { color: "rgba(0,0,0,0.06)" },
-          ticks: { display: false },
-          pointLabels: {
-            font: { family: "'Work Sans', sans-serif", size: 13, weight: "700" },
-            color: "#222",
-            padding: 22,
-            lineHeight: 1.2
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+
+        // VIKTIGT: vi skalar canvas själva
+        devicePixelRatio: 1,
+
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+          roundedRadarGrid: {
+            steps: [20, 40, 60, 80, 100],
+            cornerRadius: 16,
+            stroke: "rgba(0,0,0,0.10)",
+            lineWidth: 1
+          }
+        },
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            grid: { circular: false, color: "rgba(0,0,0,0)" },
+            angleLines: { color: "rgba(0,0,0,0.06)" },
+            ticks: { display: false },
+            pointLabels: {
+              font: { family: "'Work Sans', sans-serif", size: 13, weight: "700" },
+              color: "#222",
+              padding: 22,
+              lineHeight: 1.2
+            }
           }
         }
       }
-    }
-  });
+    });
 
-  window.radarChart.resize();
-  window.__RADAR_READY__ = true;
-});
+    window.radarChart.resize();
+    window.__RADAR_READY__ = true;
+  });
 })();
 </script>
 
