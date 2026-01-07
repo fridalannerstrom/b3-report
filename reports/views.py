@@ -454,7 +454,7 @@ B3_CLUSTER_QUESTIONS = {
     ],
   },
 
-  "Rekrytera, utveckla och behålla rätt förmågor och personer": {
+  "Rekrytera, utveckla och behåll rätt förmågor och personer": {
     "top": [
       "Hur fångar du både kompetens, kulturmatch och utvecklingsvilja i en rekrytering? ",
       "Hur skapar du tydliga förväntningar som hjälper andra att växa?",
