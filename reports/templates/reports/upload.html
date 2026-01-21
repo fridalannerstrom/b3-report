@@ -37,8 +37,12 @@
     {% include "reports/_report_content.html" %}
   </div>
 
-  <a href="{% url 'report_pdf_download' %}" class="btn btn-secondary pdf-download-btn">
-  Ladda ned som PDF
+<a class="btn btn-primary" href="{% url 'report_pdf_download' %}">
+  Ladda ner PDF (med visuell mappning)
+</a>
+
+<a class="btn btn-outline-primary" href="{% url 'report_pdf_download' %}?mapping=0">
+  Ladda ner PDF (utan visuell mappning)
 </a>
   </div>
 

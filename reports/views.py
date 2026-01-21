@@ -964,7 +964,13 @@ async def _render_pdf_async(url: str, cookie_name: str, cookie_value: Optional[s
         }
         """)
 
-        await page.wait_for_function("() => window.__RADAR_READY__ === true", timeout=8000)
+        try:
+            await page.wait_for_function(
+                "() => !document.querySelector('#radarChart') || window.__RADAR_READY__ === true",
+                timeout=8000
+            )
+        except Exception:
+            pass
 
 
         pdf_bytes = await page.pdf(
@@ -1098,26 +1104,36 @@ def report_pdf_page(request):
     report_data = request.session.get("report_data")
     if not report_data:
         return redirect("report_upload")
-    return render(request, "reports/report_pdf.html", report_data)
+
+    show_mapping = request.GET.get("mapping", "1") != "0"
+
+    ctx = dict(report_data)
+    ctx["show_mapping"] = show_mapping
+
+    return render(request, "reports/report_pdf.html", ctx)
 
 
 def report_pdf_download(request):
     """
-    Laddar ner PDF för ENDAST rapporten (printar report_pdf_page).
-    Viktigt: skickar med session-cookie till Playwright.
+    Laddar ner PDF (printar report_pdf_page).
+    Stödjer ?mapping=0 för att exkludera visuella mappningen.
     """
     report_data = request.session.get("report_data")
     if not report_data:
         return redirect("report_upload")
 
+    mapping = request.GET.get("mapping", "1")  # "1" eller "0"
     url = request.build_absolute_uri(reverse("report_pdf_page"))
+    if mapping == "0":
+        url += "?mapping=0"
 
     cookie_name = settings.SESSION_COOKIE_NAME
     cookie_value = request.COOKIES.get(cookie_name)
 
     pdf_bytes = asyncio.run(_render_pdf_async(url, cookie_name, cookie_value))
 
-    response = HttpResponse(pdf_bytes, content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="rapport.pdf"'
-    return response
+    filename = "rapport.pdf" if mapping != "0" else "rapport_utan_mappning.pdf"
 
+    response = HttpResponse(pdf_bytes, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response

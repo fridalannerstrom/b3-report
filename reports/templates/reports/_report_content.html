@@ -342,6 +342,8 @@
 
 </section>
 
+{% if show_mapping %}
+
 <section class="page page-mapping page-intro">
 <div class="page-spacer-7" aria-hidden="true"></div>
   <header class="page-header">
@@ -531,12 +533,18 @@
 
 {% endfor %}
 
+<div class="page-spacer-22" aria-hidden="true"></div>
+
+
+
+{% endif %}
 
 
 
 {% if insights.most_natural and insights.needs_development %}
 <section class="page page-closing page-intro">
-  <div class="page-spacer-22" aria-hidden="true"></div>
+
+  <div class="page-spacer-24" aria-hidden="true"></div>
 
   <div class="section-label">AVSLUTNING</div>
   <h2 class="page-title">Summering och reflektion</h2>

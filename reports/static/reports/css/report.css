@@ -1411,12 +1411,17 @@ body.pdf .comp-right{
      }
 
                          .page-spacer-22 {
-       height: 750px;
+       height: 800px;
        /* hur mycket luft du vill ha */
      }
 
-                              .page-spacer-23 {
-       height: 300px;
+        .page-spacer-23 {
+       height: 350px;
+       /* hur mycket luft du vill ha */
+     }
+
+      .page-spacer-24 {
+       height: 50px;
        /* hur mycket luft du vill ha */
      }
 
