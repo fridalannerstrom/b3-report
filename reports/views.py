@@ -995,6 +995,7 @@ def upload_view(request):
     Sparar report_data i session.
     """
     context: Dict[str, Any] = {"form": ExcelUploadForm()}
+    context["show_mapping"] = True
 
     if request.method == "POST":
         form = ExcelUploadForm(request.POST, request.FILES)
@@ -1091,6 +1092,7 @@ def upload_view(request):
 
         request.session["report_data"] = report_data
         context.update(report_data)
+        context["show_mapping"] = True
 
     return render(request, "reports/upload.html", context)
 
