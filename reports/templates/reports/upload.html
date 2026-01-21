@@ -31,19 +31,25 @@
     <p class="message error">{{ error }}</p>
   {% endif %}
 
+
+
 {% if competencies %}
+
+<div class="buttons-wrap">
+<a class="btn btn-primary" href="{% url 'report_pdf_download' %}">
+  Ladda ner PDF (med visuell mappning)
+</a>
+
+<a class="btn btn-primary" href="{% url 'report_pdf_download' %}?mapping=0">
+  Ladda ner PDF (utan visuell mappning)
+</a>
+</div>
+
 <div class="preview-card" id="reportBox">
   <div class="report-surface">
     {% include "reports/_report_content.html" %}
   </div>
 
-<a class="btn btn-primary" href="{% url 'report_pdf_download' %}">
-  Ladda ner PDF (med visuell mappning)
-</a>
-
-<a class="btn btn-outline-primary" href="{% url 'report_pdf_download' %}?mapping=0">
-  Ladda ner PDF (utan visuell mappning)
-</a>
   </div>
 
   <script>
